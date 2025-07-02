@@ -4,7 +4,7 @@ export interface ShoppingListItem {
   purchased: boolean
   dateAdded: string
   author: string
-  category?: string
+  category: string
   shopName?: string
   shopId?: string
 }
