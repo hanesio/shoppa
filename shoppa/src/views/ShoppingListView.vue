@@ -2,15 +2,21 @@
   <div v-if="fullList" class="flex flex-col gap-4">
     <h2 class="sticky top-0 left-40 text-5xl">{{ fullList.name }}</h2>
     <div v-if="fullList.items.length > 0">
-      <ul class="flex flex-col gap-0.5">
-        <li v-for="item in openItems" :key="item.id">
-          <ShoppingListItemEntry
-            @click="purchase(item)"
-            :name="item.name"
-            :category="item.category"
-          />
-        </li>
-      </ul>
+      <div v-for="list in listByShops" :key="list.shopName">
+        <div class="flex items-center gap-2">
+          <p class="text-indigo-500">{{ list.shopName }}</p>
+          <div class="h-0.5 w-full bg-gray-200"></div>
+        </div>
+        <ul class="flex flex-col gap-0.5">
+          <li v-for="item in list.items" :key="item.id">
+            <ShoppingListItemEntry
+              @click="purchase(item)"
+              :name="item.name"
+              :category="item.category"
+            />
+          </li>
+        </ul>
+      </div>
     </div>
     <div v-else class="text-gray-500">
       <p>Keine Artikel in dieser Liste.</p>
@@ -25,19 +31,18 @@
       </ul>
     </details>
 
-    <footer class="sticky right-0 bottom-0 left-0 z-10 flex flex-col gap-2 pb-4">
+    <footer class="sticky right-0 bottom-0 left-0 z-10 flex flex-col gap-2 border-t pb-4">
       <div>
-        <label for="category-select" class="text-sm">Kategorie:</label>
-        <select id="category-select" class="rounded-sm border p-2" v-model="newItemCategory">
-          <option v-for="category in categoryNames" :key="category" :value="category">
-            {{ category }}
-          </option>
-        </select>
-        <select id="shop-select" class="ml-2 rounded-sm border p-2" v-model="newShopName">
-          <option v-for="shop in shopNames" :key="shop" :value="shop">
-            {{ shop }}
-          </option>
-        </select>
+        <PillSelect
+          :items="categoryNames"
+          v-model="newItemCategory"
+          :color="{ bg: 'bg-blue-200', text: 'text-blue-900', border: 'border-blue-400' }"
+        />
+        <PillSelect
+          :items="shopNames"
+          v-model="newShopName"
+          :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
+        />
       </div>
       <div class="justiy-end flex items-center gap-2">
         <input
@@ -60,13 +65,14 @@
 </template>
 
 <script setup lang="ts">
+import PillSelect from '@/components/PillSelect.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
 import PurchasedItemEntry from '@/components/PurchasedItemEntry.vue'
 import ShoppingListItemEntry from '@/components/ShoppingListItemEntry.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import { useShopStore } from '@/stores/ShopStore'
-import { type ShoppingListItem } from '@/types'
+import { type ShoppingList, type ShoppingListItem } from '@/types'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -83,6 +89,9 @@ const categoryNames = categoryStore.categories.map((category) => category.name)
 const shopStore = useShopStore()
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
+// Create a list of items grouped by shop names
+const listByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
+
 initLists()
 
 const newItemName = ref('')
@@ -91,6 +100,9 @@ const newShopName = ref('Supermarkt')
 function initLists() {
   if (fullList) {
     openItems.value = fullList.items.filter((item) => !item.purchased)
+    // Group items by shop names
+    listByShops.value = sortListByShops(openItems.value)
+    // Filter purchased items
     purchasedItems.value = fullList.items.filter((item) => item.purchased)
   }
 }
@@ -119,6 +131,16 @@ function purchase(item: ShoppingListItem) {
 function putBack(item: ShoppingListItem) {
   item.purchased = false
   initLists()
+}
+
+function sortListByShops(items: ShoppingListItem[]) {
+  const result: { shopName: string; items: ShoppingListItem[] }[] = []
+  shopNames.forEach((shopName) => {
+    const shopItems = items.filter((item) => item.shopName === shopName)
+    if (shopItems.length === 0) return
+    result.push({ shopName, items: shopItems })
+  })
+  return result
 }
 </script>
 

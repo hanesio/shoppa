@@ -10,7 +10,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Obst & Gemüse',
     {
       text: 'text-lime-800',
-      bg: 'bg-lime-100',
+      bg: 'bg-lime-200',
       border: 'border-lime-400',
       hover: 'hover:bg-lime-300',
     },
@@ -19,7 +19,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Fleisch & Wurst',
     {
       text: 'text-pink-800',
-      bg: 'bg-pink-100',
+      bg: 'bg-pink-200',
       border: 'border-pink-400',
       hover: 'hover:bg-pink-300',
     },
@@ -28,7 +28,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Milchprodukte',
     {
       text: 'text-blue-800',
-      bg: 'bg-blue-100',
+      bg: 'bg-blue-200',
       border: 'border-blue-400',
       hover: 'hover:bg-blue-300',
     },
@@ -37,7 +37,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Getränke',
     {
       text: 'text-purple-800',
-      bg: 'bg-purple-100',
+      bg: 'bg-purple-200',
       border: 'border-purple-400',
       hover: 'hover:bg-purple-300',
     },
@@ -46,7 +46,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Haushalt',
     {
       text: 'text-stone-800',
-      bg: 'bg-stone-100',
+      bg: 'bg-stone-200',
       border: 'border-stone-400',
       hover: 'hover:bg-stone-300',
     },
@@ -55,7 +55,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Getreideprodukte',
     {
       text: 'text-yellow-800',
-      bg: 'bg-yellow-100',
+      bg: 'bg-yellow-200',
       border: 'border-yellow-400',
       hover: 'hover:bg-yellow-300',
     },
@@ -64,7 +64,7 @@ export const colorMap = new Map<string, ColorObject>([
     'Sonstiges',
     {
       text: 'text-gray-800',
-      bg: 'bg-gray-100',
+      bg: 'bg-gray-200',
       border: 'border-gray-400',
       hover: 'hover:bg-gray-300',
     },
