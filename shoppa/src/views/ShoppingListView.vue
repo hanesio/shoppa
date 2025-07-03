@@ -1,28 +1,18 @@
 <template>
   <div v-if="fullList" class="flex flex-col gap-4">
     <h2 class="sticky top-0 left-40 text-5xl">{{ fullList.name }}</h2>
-    <div v-if="fullList.items.length > 0">
-      <div v-for="list in listByShops" :key="list.shopName">
-        <div class="flex items-center gap-2">
-          <p class="text-indigo-500">{{ list.shopName }}</p>
-          <div class="h-0.5 w-full bg-gray-200"></div>
-        </div>
-        <ul class="flex flex-col gap-0.5">
-          <li v-for="item in list.items" :key="item.id">
-            <ShoppingListItemEntry
-              @click="purchase(item)"
-              :name="item.name"
-              :category="item.category"
-            />
-          </li>
-        </ul>
-      </div>
-    </div>
+
+    <SortedShoppingList
+      @purchase="updateLists"
+      v-if="fullList.items.length > 0"
+      :sorted-lists="listsByShops"
+    />
+
     <div v-else class="text-gray-500">
       <p>Keine Artikel in dieser Liste.</p>
     </div>
 
-    <details v-if="purchasedItems.length > 0" class="mt-8">
+    <details v-if="purchasedItems.length > 0">
       <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
       <ul class="flex flex-col gap-0.5">
         <li v-for="item in purchasedItems" :key="item.id">
@@ -68,13 +58,13 @@
 import PillSelect from '@/components/PillSelect.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
 import PurchasedItemEntry from '@/components/PurchasedItemEntry.vue'
-import ShoppingListItemEntry from '@/components/ShoppingListItemEntry.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import { useShopStore } from '@/stores/ShopStore'
-import { type ShoppingList, type ShoppingListItem } from '@/types'
+import { type ShoppingListItem } from '@/types'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import SortedShoppingList from '@/components/SortedShoppingList.vue'
 
 const route = useRoute()
 const listId = route.params.id as string
@@ -90,18 +80,19 @@ const shopStore = useShopStore()
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
 // Create a list of items grouped by shop names
-const listByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
-
-initLists()
+const listsByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
 
 const newItemName = ref('')
 const newItemCategory = ref('Sonstiges') // Default category
 const newShopName = ref('Supermarkt')
-function initLists() {
+
+updateLists()
+
+function updateLists() {
   if (fullList) {
     openItems.value = fullList.items.filter((item) => !item.purchased)
     // Group items by shop names
-    listByShops.value = sortListByShops(openItems.value)
+    listsByShops.value = sortListByShops(openItems.value)
     // Filter purchased items
     purchasedItems.value = fullList.items.filter((item) => item.purchased)
   }
@@ -120,17 +111,18 @@ function addItem() {
     })
 
     newItemName.value = ''
-    initLists()
+
+    updateLists()
   }
 }
 
 function purchase(item: ShoppingListItem) {
   item.purchased = true
-  initLists()
+  updateLists()
 }
 function putBack(item: ShoppingListItem) {
   item.purchased = false
-  initLists()
+  updateLists()
 }
 
 function sortListByShops(items: ShoppingListItem[]) {
@@ -138,6 +130,13 @@ function sortListByShops(items: ShoppingListItem[]) {
   shopNames.forEach((shopName) => {
     const shopItems = items.filter((item) => item.shopName === shopName)
     if (shopItems.length === 0) return
+    // Sort items by category
+    shopItems.sort((a, b) => {
+      const categoryA = categoryStore.categories.find((c) => c.name === a.category)
+      const categoryB = categoryStore.categories.find((c) => c.name === b.category)
+      return (categoryA?.order || 0) - (categoryB?.order || 0)
+    })
+
     result.push({ shopName, items: shopItems })
   })
   return result
