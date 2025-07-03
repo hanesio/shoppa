@@ -8,7 +8,7 @@
     <ul class="flex flex-col gap-0.5">
       <li v-for="item in list.items" :key="item.id">
         <ShoppingListItemEntry
-          @click="purchase(item)"
+          @purchase="purchase(item)"
           :name="item.name"
           :category="item.category"
         />

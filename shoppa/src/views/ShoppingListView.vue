@@ -1,6 +1,6 @@
 <template>
   <div v-if="fullList" class="flex flex-col gap-4">
-    <h2 class="sticky top-0 left-40 text-5xl">{{ fullList.name }}</h2>
+    <h2 class="sticky top-0 left-40 z-10 bg-white py-2 text-5xl">{{ fullList.name }}</h2>
 
     <SortedShoppingList
       @purchase="updateLists"
@@ -21,42 +21,16 @@
       </ul>
     </details>
 
-    <footer class="sticky right-0 bottom-0 left-0 z-10 flex flex-col gap-2 border-t pb-4">
-      <div>
-        <PillSelect
-          :items="categoryNames"
-          v-model="newItemCategory"
-          :color="{ bg: 'bg-blue-200', text: 'text-blue-900', border: 'border-blue-400' }"
-        />
-        <PillSelect
-          :items="shopNames"
-          v-model="newShopName"
-          :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
-        />
-      </div>
-      <div class="justiy-end flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="1kg Mehl"
-          class="w-full rounded-sm border p-2"
-          v-model="newItemName"
-          @keyup.enter="addItem"
-          @keyup.esc="newItemName = ''"
-        />
-        <button
-          @click="addItem"
-          class="flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-lime-500 p-2 text-center text-4xl active:scale-90"
-        >
-          <IconPlus class="h-8 w-8 text-white" />
-        </button>
-      </div>
-    </footer>
+    <AddItemBar @addItem="updateLists" :shop-names :category-names :list-id />
+    <button
+      class="absolute right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-lime-500 p-2 text-center text-4xl active:scale-90"
+    >
+      <IconPlus class="h-8 w-8 text-white" />
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import PillSelect from '@/components/PillSelect.vue'
-import IconPlus from '@/components/icons/IconPlus.vue'
 import PurchasedItemEntry from '@/components/PurchasedItemEntry.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
@@ -65,6 +39,8 @@ import { type ShoppingListItem } from '@/types'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
+import AddItemBar from '@/components/AddItemBar.vue'
+import IconPlus from '@/components/icons/IconPlus.vue'
 
 const route = useRoute()
 const listId = route.params.id as string
@@ -82,10 +58,6 @@ const shopNames = shopStore.shops.map((shop) => shop.name)
 // Create a list of items grouped by shop names
 const listsByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
 
-const newItemName = ref('')
-const newItemCategory = ref('Sonstiges') // Default category
-const newShopName = ref('Supermarkt')
-
 updateLists()
 
 function updateLists() {
@@ -95,24 +67,6 @@ function updateLists() {
     listsByShops.value = sortListByShops(openItems.value)
     // Filter purchased items
     purchasedItems.value = fullList.items.filter((item) => item.purchased)
-  }
-}
-
-function addItem() {
-  if (newItemName.value != '') {
-    shoppingListsStore.addItemToList(listId, {
-      name: newItemName.value,
-      category: newItemCategory.value,
-      shopId: '1',
-      purchased: false,
-      dateAdded: new Date().toISOString(),
-      shopName: newShopName.value,
-      author: 'Max Mustermann',
-    })
-
-    newItemName.value = ''
-
-    updateLists()
   }
 }
 

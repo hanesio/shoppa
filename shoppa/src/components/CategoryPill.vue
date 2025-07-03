@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex cursor-pointer items-center justify-center rounded-full px-2 transition-colors duration-200 ease-in-out"
+    class="flex h-4 cursor-pointer items-center justify-center rounded-full px-2 py-3 leading-0 transition-colors duration-200 ease-in-out"
     :class="[
       selected
         ? 'border-3 font-semibold' + ' ' + color.bg + ' ' + color.border
@@ -9,7 +9,9 @@
       color.text,
     ]"
   >
-    {{ name }}
+    <p class="-translate-y-0.5">
+      {{ name }}
+    </p>
   </button>
 </template>
 
