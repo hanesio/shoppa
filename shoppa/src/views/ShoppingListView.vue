@@ -1,19 +1,24 @@
 <template>
   <div v-if="fullList" class="flex flex-col gap-4">
-    <h2 class="sticky top-0 left-40 z-10 bg-white py-2 text-5xl text-indigo-700">
-      {{ fullList.name }}
-    </h2>
-
-    <SortedShoppingList
-      @purchase="updateLists"
-      v-if="fullList.items.length > 0"
-      :sorted-lists="listsByShops"
-    />
-
-    <div v-else class="text-gray-500">
-      <p>Keine Artikel in dieser Liste.</p>
+    <div class="fixed top-0 left-0 z-10 flex w-full items-center gap-2 bg-white px-4">
+      <button @click="router.push('/')">
+        <IconArrowRight class="h-8 w-8 rotate-180 text-indigo-500" />
+      </button>
+      <h2 class="bg-white py-2 text-5xl text-indigo-700">
+        {{ fullList.name }}
+      </h2>
     </div>
 
+    <div class="mt-12 flex w-full flex-col justify-between gap-1 lg:flex-row">
+      <SortedShoppingList
+        @purchase="updateLists"
+        v-if="fullList.items.length > 0"
+        :sorted-lists="listsByShops"
+      />
+      <div v-else class="text-gray-500">
+        <p>Keine Artikel in dieser Liste.</p>
+      </div>
+    </div>
     <details v-if="purchasedItems.length > 0">
       <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
       <ul class="flex flex-col gap-0.5">
@@ -56,8 +61,11 @@ import AddItemBar from '@/components/AddItemBar.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
 import { onClickOutside } from '@vueuse/core'
 import { useTemplateRef } from 'vue'
+import IconArrowRight from '@/components/icons/IconArrowRight.vue'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const listId = route.params.id as string
 
 const shoppingListsStore = useShoppingListsStore()
