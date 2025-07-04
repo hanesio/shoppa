@@ -6,7 +6,7 @@
       </nav>
     </div>
   </header>
-  <main class="px-6">
+  <main class="px-2 lg:px-6">
     <RouterView />
   </main>
 </template>

@@ -17,9 +17,7 @@ export const useCategoryStore = defineStore('categories', {
         { name: 'Fleisch & Wurst', order: 2 },
         { name: 'Milchprodukte', order: 3 },
         { name: 'Getränke', order: 4 },
-        { name: 'Haushalt', order: 5 },
-        { name: 'Getreideprodukte', order: 6 },
-        { name: 'Sonstiges', order: 7 },
+        { name: 'Sonstiges', order: 5 },
       ],
     }
   },

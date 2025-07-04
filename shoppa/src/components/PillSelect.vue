@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full flex-wrap gap-2 py-2">
+  <div class="flex w-full flex-wrap items-center gap-1 py-0.5">
     <CategoryPill
       v-for="item in items"
       :key="item"

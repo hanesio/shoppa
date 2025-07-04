@@ -1,5 +1,5 @@
 <template>
-  <footer class="sticky right-0 bottom-0 left-0 z-10 flex flex-col border-t bg-white pb-4">
+  <div class="flex w-full flex-col border-t-2 border-indigo-500 bg-white pt-1">
     <div>
       <PillSelect
         :items="categoryNames"
@@ -12,11 +12,12 @@
         :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
       />
     </div>
-    <div class="justiy-end flex items-center gap-2">
+    <div class="justiy-end flex items-center gap-2 bg-gray-200 px-4 py-1">
       <input
+        ref="inputRef"
         type="text"
         placeholder="1kg Mehl"
-        class="w-full rounded-sm border p-2"
+        class="w-full rounded-sm p-2 focus:ring-0 focus:ring-indigo-500 focus:outline-none"
         v-model="newItemName"
         @keyup.enter="addItem"
         @keyup.esc="newItemName = ''"
@@ -28,18 +29,19 @@
         />
       </button>
     </div>
-  </footer>
+  </div>
 </template>
 <script setup lang="ts">
 import PillSelect from '@/components/PillSelect.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
-import { ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 
 const props = defineProps<{
   shopNames: string[]
   categoryNames: string[]
   listId: string
+  focus: boolean
 }>()
 const emit = defineEmits<{
   (e: 'addItem'): void
@@ -51,6 +53,25 @@ const newItemName = ref('')
 const newItemCategory = ref('Sonstiges') // Default category
 const newShopName = ref('Supermarkt')
 
+const inputRef = ref<HTMLInputElement | null>(null)
+
+watch(
+  () => props.focus,
+  (val) => {
+    if (val) {
+      nextTick(() => {
+        inputRef.value?.focus()
+      })
+    }
+  },
+)
+
+watch(newItemCategory, () => {
+  inputRef.value?.focus()
+})
+watch(newShopName, () => {
+  inputRef.value?.focus()
+})
 function addItem() {
   if (newItemName.value != '') {
     shoppingListsStore.addItemToList(props.listId, {
@@ -65,6 +86,7 @@ function addItem() {
 
     newItemName.value = ''
     emit('addItem')
+    inputRef.value?.focus()
   }
 }
 </script>

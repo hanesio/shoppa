@@ -1,15 +1,15 @@
 <template>
   <button
-    class="flex h-4 cursor-pointer items-center justify-center rounded-full px-2 py-3 leading-0 transition-colors duration-200 ease-in-out"
+    class="flex h-4 cursor-pointer items-center justify-center rounded-full border-3 px-1 py-2 transition-colors duration-200 ease-in-out"
     :class="[
       selected
-        ? 'border-3 font-semibold' + ' ' + color.bg + ' ' + color.border
-        : 'border font-normal',
+        ? 'font-semibold' + ' ' + color.bg + ' ' + color.border
+        : 'border-transparent bg-gray-100 font-normal',
       color.border,
       color.text,
     ]"
   >
-    <p class="-translate-y-0.5">
+    <p class="text-sm">
       {{ name }}
     </p>
   </button>

@@ -2,7 +2,7 @@
   <div v-for="list in sortedLists" :key="list.shopName">
     <div class="flex items-center gap-2">
       <p class="text-indigo-500">{{ list.shopName }}</p>
-      <div class="h-0.5 w-full bg-gray-200"></div>
+      <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
     </div>
 
     <ul class="flex flex-col gap-0.5">
