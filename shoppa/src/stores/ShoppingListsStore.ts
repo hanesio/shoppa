@@ -62,7 +62,7 @@ export const useShoppingListsStore = defineStore('lists', {
     addList(list: ShoppingList) {
       this.lists.push(list)
     },
-    removeList(listId: string) {
+    deleteList(listId: string) {
       this.lists = this.lists.filter((list) => list.id !== listId)
     },
     updateList(listId: string, updatedList: ShoppingList) {

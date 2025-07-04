@@ -22,20 +22,15 @@
         @keyup.enter="addItem"
         @keyup.esc="newItemName = ''"
       />
-      <button>
-        <IconArrowRight
-          class="h-10 w-10 -rotate-90 cursor-pointer rounded-full bg-indigo-500 p-2 text-white active:scale-90"
-          @click="addItem"
-        />
-      </button>
+      <ButtonSubmit @click="addItem" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import PillSelect from '@/components/PillSelect.vue'
-import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
+import ButtonSubmit from './ButtonSubmit.vue'
 
 const props = defineProps<{
   shopNames: string[]

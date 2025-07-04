@@ -1,23 +1,25 @@
 <template>
-  <div v-if="fullList" class="flex flex-col gap-4">
-    <div class="fixed top-0 left-0 z-10 flex w-full items-center gap-2 bg-white px-4">
+  <div v-if="fullList" class="flex h-screen flex-col gap-4">
+    <div
+      class="fixed top-0 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
+    >
       <button @click="router.push('/')">
         <IconArrowRight class="h-8 w-8 rotate-180 text-indigo-500" />
       </button>
-      <h2 class="bg-white py-2 text-5xl text-indigo-700">
+      <h2 ref="headlineRef" class="bg-white py-2 text-4xl text-indigo-700">
         {{ fullList.name }}
       </h2>
+      <ButtonTrash @click="deleteList" />
     </div>
 
-    <div class="mt-12 flex w-full flex-col justify-between gap-1 lg:flex-row">
+    <div class="mt-16 flex w-full flex-col justify-between gap-1 lg:flex-row">
       <SortedShoppingList
         @purchase="updateLists"
         v-if="fullList.items.length > 0"
         :sorted-lists="listsByShops"
       />
-      <div v-else class="text-gray-500">
-        <p>Keine Artikel in dieser Liste.</p>
-      </div>
+
+      <p v-else class="text-center text-gray-500">Keine Artikel in dieser Liste</p>
     </div>
     <details v-if="purchasedItems.length > 0">
       <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
@@ -54,7 +56,7 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import { useShopStore } from '@/stores/ShopStore'
 import { type ShoppingListItem } from '@/types'
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
@@ -63,6 +65,7 @@ import { onClickOutside } from '@vueuse/core'
 import { useTemplateRef } from 'vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
+import ButtonTrash from '@/components/ButtonTrash.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -126,8 +129,12 @@ function toggleAddItemBar() {
   showAddItemBar.value = true
 }
 
-interface ClickOutsideEvent extends MouseEvent {}
+function deleteList() {
+  shoppingListsStore.deleteList(listId)
+  router.push('/')
+}
 
+interface ClickOutsideEvent extends MouseEvent {}
 onClickOutside(target, (event: ClickOutsideEvent) => (showAddItemBar.value = false))
 </script>
 
