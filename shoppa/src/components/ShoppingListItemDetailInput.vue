@@ -1,16 +1,10 @@
 <template>
-  <div
-    class="relative flex cursor-pointer items-center justify-between gap-4 rounded-sm bg-gray-100 px-4 py-2 transition active:scale-98"
-  >
-    <div
-      class="absolute left-0 my-2 h-4/5 w-2 rounded-l-sm rounded-r-xl"
-      :class="colorClass.bg"
-    ></div>
+  <div class="relative my-10 flex cursor-pointer items-center justify-between gap-4 px-2">
     <input
       type="text"
       @change="updateItem"
       v-model="itemName"
-      class="w-full text-6xl outline-none"
+      class="w-full border-b-3 border-indigo-300 py-2 text-2xl outline-none"
       :class="[purchased ? 'text-gray-500 line-through' : colorClass.text]"
     />
     <button
@@ -18,7 +12,7 @@
       @click="$emit('purchase')"
       class="flex h-10 w-10 shrink-0 rounded-full border-3 border-indigo-300"
     ></button>
-    <IconCheck @click="$emit('put-back')" v-else class="h-12 w-12 shrink-0 text-indigo-200" />
+    <IconCheck @click="$emit('put-back')" v-else class="h-10 w-10 shrink-0 text-indigo-200" />
   </div>
 </template>
 

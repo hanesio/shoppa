@@ -1,30 +1,48 @@
 <template>
   <button
-    class="flex h-4 cursor-pointer items-center justify-center rounded-full border-3 px-1 py-2 transition-colors duration-200 ease-in-out"
+    class="flex h-4 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 ease-in-out"
     :class="[
       selected
-        ? 'font-semibold' + ' ' + color.bg + ' ' + color.border
-        : 'border-transparent bg-gray-100 font-normal',
-      color.border,
-      color.text,
+        ? 'font-semibold' + ' ' + color.bg + ' ' + color.border + ' ' + color.text
+        : 'border-transparent bg-gray-100 font-normal text-gray-500',
+      size,
     ]"
   >
-    <p class="text-sm">
+    <p>
       {{ name }}
     </p>
   </button>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const props = defineProps<{
-  name: string
-  color: {
-    bg: string
-    text: string
-    border: string
+import { computed } from 'vue'
+const props = withDefaults(
+  defineProps<{
+    name: string
+    size?: string
+    color: {
+      bg: string
+      text: string
+      border: string
+    }
+    selected: boolean
+  }>(),
+  {
+    size: () => 'text-sm px-1 py-2 border-3',
+  },
+)
+
+const size = computed(() => {
+  switch (props.size) {
+    case 'sm':
+      return 'text-xs px-1 py-2 border-3'
+    case 'md':
+      return 'text-md px-2 py-3 border-3'
+    case 'lg':
+      return 'text-lg px-2 py-3 border-6'
+    default:
+      return 'text-sm px-1 py-2 border-3'
   }
-  selected: boolean
-}>()
+})
 </script>
 <style scoped></style>

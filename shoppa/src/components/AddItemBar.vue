@@ -3,6 +3,7 @@
     <div>
       <PillSelect
         :items="categoryNames"
+        :colors="categoryColors"
         v-model="newItemCategory"
         :color="{ bg: 'bg-blue-200', text: 'text-blue-900', border: 'border-blue-400' }"
       />
@@ -28,10 +29,11 @@
 </template>
 <script setup lang="ts">
 import PillSelect from '@/components/PillSelect.vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import ButtonSubmit from './ButtonSubmit.vue'
 import { generateId } from '@/utils'
+import { useCategoryStore } from '@/stores/CategoryStore'
 
 const props = defineProps<{
   shopNames: string[]
@@ -44,6 +46,8 @@ const emit = defineEmits<{
 }>()
 
 const shoppingListsStore = useShoppingListsStore()
+const categoryStore = useCategoryStore()
+const categoryColors = categoryStore.categories.map((category) => category.color)
 
 const newItemName = ref('')
 const newItemCategory = ref('Sonstiges') // Default category

@@ -6,23 +6,47 @@
       <button @click="router.push(`/lists/${listId}`)">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h1 class="bg-white py-2 text-4xl text-indigo-700">
+      <h1 class="bg-white py-2 text-xl text-indigo-700">
         {{ listName }}
       </h1>
       <div class="h-8 w-8"></div>
     </div>
 
     <div class="mt-16 flex w-full flex-col justify-between gap-4">
-      <ShoppingListItemDetailInput
-        v-if="item"
-        :category="categoryStore.getCategoryByName(item.category)"
-        v-model="itemName"
-        :purchased="item.purchased"
-        @updateItem="shoppingListsStore.updateItem(listId, itemId, itemName)"
-        @purchase="purchase(item)"
-        @put-back="putBack(item)"
-      />
-      <p v-else class="text-gray-500">Artikel nicht gefunden</p>
+      <div>
+        <ShoppingListItemDetailInput
+          v-if="item"
+          :category="categoryStore.getCategoryByName(item.category)"
+          v-model="itemName"
+          :purchased="item.purchased"
+          @updateItem="shoppingListsStore.updateItemName(listId, itemId, itemName)"
+          @purchase="purchase(item)"
+          @put-back="putBack(item)"
+        />
+        <p v-else class="text-gray-500">Artikel nicht gefunden</p>
+        <div class="flex flex-col gap-8 p-4">
+          <div>
+            <h2 class="text-lg text-indigo-500">Kategorie</h2>
+            <PillSelect
+              text-size="lg"
+              :items="categoryNames"
+              v-model="newItemCategory"
+              :colors="categoryColors"
+              @change="shoppingListsStore.updateItemCategory(listId, itemId, newItemCategory)"
+            />
+          </div>
+          <div>
+            <h2 class="text-lg text-indigo-500">Geschäft</h2>
+            <PillSelect
+              text-size="lg"
+              :items="shopNames"
+              v-model="newShopName"
+              @change="shoppingListsStore.updateItemShop(listId, itemId, newShopName)"
+            />
+          </div>
+        </div>
+      </div>
+
       <div class="flex items-center justify-between p-3">
         <ul>
           <li>hinzugefügt von {{ item?.author }}</li>
@@ -43,6 +67,8 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import { ref } from 'vue'
 import type { ShoppingListItem } from '@/types'
 import ButtonTrash from '@/components/ButtonTrash.vue'
+import PillSelect from '@/components/PillSelect.vue'
+import { useShopStore } from '@/stores/ShopStore'
 
 const router = useRouter()
 const route = useRoute()
@@ -64,7 +90,14 @@ const dateAdded = ref(
     : 'Unbekannt',
 )
 
+const newItemCategory = ref(item?.category || 'Sonstiges')
+const newShopName = ref(item?.shopName || 'Supermarkt')
+
 const categoryStore = useCategoryStore()
+const categoryNames = categoryStore.categories.map((category) => category.name)
+const categoryColors = categoryStore.categories.map((category) => category.color)
+const shopStore = useShopStore()
+const shopNames = shopStore.shops.map((shop) => shop.name)
 
 function purchase(item: ShoppingListItem) {
   item.purchased = true

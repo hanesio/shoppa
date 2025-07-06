@@ -19,6 +19,7 @@
 </template>
 <script setup lang="ts">
 import { useCategoryStore } from '@/stores/CategoryStore'
+import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
 import { type ShoppingListItem } from '@/types'
 
@@ -32,9 +33,10 @@ const emit = defineEmits<{
 }>()
 
 const categoryStore = useCategoryStore()
+const shoppingListsStore = useShoppingListsStore()
 
 function purchase(item: ShoppingListItem) {
-  item.purchased = true
+  shoppingListsStore.purchaseItem(item.id)
   emit('purchase')
 }
 </script>

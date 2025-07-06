@@ -6,7 +6,7 @@
       <button @click="router.push('/')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h1 class="bg-white py-2 text-4xl text-indigo-700">
+      <h1 class="bg-white py-2 text-xl text-indigo-700">
         {{ fullList.name }}
       </h1>
       <ButtonTrash @click="deleteList" />
@@ -31,7 +31,16 @@
       <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
       <ul class="flex flex-col gap-0.5">
         <li v-for="item in purchasedItems" :key="item.id">
-          <PurchasedItemEntry @click="putBack(item)" :name="item.name" />
+          <PurchasedItemEntry
+            @put-back="putBack(item)"
+            @show-details="
+              router.push({
+                name: 'item-details',
+                params: { itemId: item.id, listId: listId },
+              })
+            "
+            :name="item.name"
+          />
         </li>
       </ul>
     </details>
@@ -84,6 +93,7 @@ const purchasedItems = ref<ShoppingListItem[]>([])
 
 const categoryStore = useCategoryStore()
 const categoryNames = categoryStore.categories.map((category) => category.name)
+
 const shopStore = useShopStore()
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
