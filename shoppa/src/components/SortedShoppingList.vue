@@ -1,5 +1,5 @@
 <template>
-  <div v-for="list in sortedLists" :key="list.shopName">
+  <div class="w-full" v-for="list in sortedLists" :key="list.shopName">
     <div class="flex items-center gap-2">
       <p class="text-indigo-500">{{ list.shopName }}</p>
       <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
@@ -10,13 +10,14 @@
         <ShoppingListItemEntry
           @purchase="purchase(item)"
           :name="item.name"
-          :category="item.category"
+          :category="categoryStore.getCategoryByName(item.category)"
         />
       </li>
     </ul>
   </div>
 </template>
 <script setup lang="ts">
+import { useCategoryStore } from '@/stores/CategoryStore'
 import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
 import { type ShoppingListItem } from '@/types'
 
@@ -27,6 +28,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'purchase'): void
 }>()
+
+const categoryStore = useCategoryStore()
 
 function purchase(item: ShoppingListItem) {
   item.purchased = true

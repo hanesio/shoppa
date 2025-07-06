@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { generateId } from '@/utils'
 import ButtonSubmitSmall from '@/components/ButtonSubmitSmall.vue'
 import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
 
@@ -43,26 +43,17 @@ const newListName = ref('')
 
 function addList() {
   if (newListName.value.trim() === '') return
+  const id = generateId()
   shoppingListsStore.addList({
-    id: generateId(),
+    id,
     name: newListName.value,
     items: [],
     authors: [],
     dateCreated: new Date().toISOString(),
   })
+  // Reset the input field after adding the list
   newListName.value = ''
-}
-
-function generateId() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID()
-  }
-  // Fallback: simple UUID v4 generator
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
+  router.push({ name: 'shopping-list', params: { id } })
 }
 </script>
 

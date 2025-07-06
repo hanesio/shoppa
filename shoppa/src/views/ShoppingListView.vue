@@ -4,7 +4,7 @@
       class="fixed top-0 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
     >
       <button @click="router.push('/')">
-        <IconArrowRight class="h-8 w-8 rotate-180 text-indigo-500" />
+        <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
       <h2 ref="headlineRef" class="bg-white py-2 text-4xl text-indigo-700">
         {{ fullList.name }}
@@ -19,7 +19,7 @@
         :sorted-lists="listsByShops"
       />
 
-      <p v-else class="text-center text-gray-500">Keine Artikel in dieser Liste</p>
+      <p v-else class="mx-auto text-center text-gray-500">Keine Artikel in dieser Liste</p>
     </div>
     <details v-if="purchasedItems.length > 0">
       <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>

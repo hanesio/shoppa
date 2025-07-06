@@ -5,68 +5,14 @@ interface ColorObject {
   hover: string
 }
 
-export const colorMap = new Map<string, ColorObject>([
-  [
-    'Obst & Gemüse',
-    {
-      text: 'text-lime-800',
-      bg: 'bg-lime-200',
-      border: 'border-lime-400',
-      hover: 'hover:bg-lime-300',
-    },
-  ],
-  [
-    'Fleisch & Wurst',
-    {
-      text: 'text-pink-800',
-      bg: 'bg-pink-200',
-      border: 'border-pink-400',
-      hover: 'hover:bg-pink-300',
-    },
-  ],
-  [
-    'Milchprodukte',
-    {
-      text: 'text-blue-800',
-      bg: 'bg-blue-200',
-      border: 'border-blue-400',
-      hover: 'hover:bg-blue-300',
-    },
-  ],
-  [
-    'Getränke',
-    {
-      text: 'text-purple-800',
-      bg: 'bg-purple-200',
-      border: 'border-purple-400',
-      hover: 'hover:bg-purple-300',
-    },
-  ],
-  [
-    'Haushalt',
-    {
-      text: 'text-stone-800',
-      bg: 'bg-stone-200',
-      border: 'border-stone-400',
-      hover: 'hover:bg-stone-300',
-    },
-  ],
-  [
-    'Getreideprodukte',
-    {
-      text: 'text-yellow-800',
-      bg: 'bg-yellow-200',
-      border: 'border-yellow-400',
-      hover: 'hover:bg-yellow-300',
-    },
-  ],
-  [
-    'Sonstiges',
-    {
-      text: 'text-gray-800',
-      bg: 'bg-gray-200',
-      border: 'border-gray-400',
-      hover: 'hover:bg-gray-300',
-    },
-  ],
-])
+export function generateId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  // Fallback: simple UUID v4 generator
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}

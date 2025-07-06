@@ -17,13 +17,27 @@
 </template>
 
 <script setup lang="ts">
-import { colorMap } from '@/utils'
+import { type OrderedCategory } from '@/stores/CategoryStore'
 import { computed } from 'vue'
 
-const props = defineProps<{
-  name: string
-  category: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    name: string
+    category?: OrderedCategory
+  }>(),
+  {
+    category: () => ({
+      name: 'Sonstiges',
+      order: 0,
+      color: {
+        text: 'text-gray-500',
+        bg: 'bg-gray-100',
+        border: 'border-gray-300',
+        hover: 'hover:bg-gray-200',
+      },
+    }),
+  },
+)
 
 const emit = defineEmits<{
   (e: 'purchase'): void
@@ -31,7 +45,7 @@ const emit = defineEmits<{
 
 const colorClass = computed(
   () =>
-    colorMap.get(props.category) || {
+    props.category.color || {
       text: 'text-gray-500',
       bg: 'bg-gray-100',
       border: 'border-gray-300',
