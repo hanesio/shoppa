@@ -9,6 +9,7 @@
       <li v-for="item in list.items" :key="item.id">
         <ShoppingListItemEntry
           @purchase="purchase(item)"
+          @showDetails="emit('showDetails', item)"
           :name="item.name"
           :category="categoryStore.getCategoryByName(item.category)"
         />
@@ -27,6 +28,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'purchase'): void
+  (e: 'showDetails', item: ShoppingListItem): void
 }>()
 
 const categoryStore = useCategoryStore()

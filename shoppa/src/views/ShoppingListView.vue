@@ -6,15 +6,21 @@
       <button @click="router.push('/')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h2 ref="headlineRef" class="bg-white py-2 text-4xl text-indigo-700">
+      <h1 class="bg-white py-2 text-4xl text-indigo-700">
         {{ fullList.name }}
-      </h2>
+      </h1>
       <ButtonTrash @click="deleteList" />
     </div>
 
     <div class="mt-16 flex w-full flex-col justify-between gap-1 lg:flex-row">
       <SortedShoppingList
         @purchase="updateLists"
+        @showDetails="
+          router.push({
+            name: 'item-details',
+            params: { itemId: $event.id, listId: listId },
+          })
+        "
         v-if="fullList.items.length > 0"
         :sorted-lists="listsByShops"
       />
@@ -56,7 +62,7 @@ import { useCategoryStore } from '@/stores/CategoryStore'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import { useShopStore } from '@/stores/ShopStore'
 import { type ShoppingListItem } from '@/types'
-import { nextTick, ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'

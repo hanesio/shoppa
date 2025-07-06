@@ -72,10 +72,34 @@ export const useShoppingListsStore = defineStore('lists', {
         this.lists[index].dateModified = new Date().toISOString().split('T')[0] // Update the modified date
       }
     },
+    updateItem(listId: string, itemId: string, updatedName: string) {
+      const list = this.lists.find((list) => list.id === listId)
+      if (list) {
+        const itemIndex = list.items.findIndex((item) => item.id === itemId)
+        if (itemIndex !== -1) {
+          //The item at itemIndex is updated with new values from updatedItem, while keeping unchanged properties intact.
+          list.items[itemIndex].name = updatedName
+          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+        }
+      }
+    },
+    deleteItem(listId: string, itemId: string) {
+      const list = this.lists.find((list) => list.id === listId)
+      if (list) {
+        list.items = list.items.filter((item) => item.id !== itemId)
+        list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+      }
+    },
   },
   getters: {
     getListById: (state) => {
       return (listId: string) => state.lists.find((list) => list.id === listId)
+    },
+    getItemById: (state) => {
+      return (listId: string, itemId: string) => {
+        const list = state.lists.find((list) => list.id === listId)
+        return list ? list.items.find((item) => item.id === itemId) : undefined
+      }
     },
   },
 })

@@ -31,6 +31,7 @@ import PillSelect from '@/components/PillSelect.vue'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
 import ButtonSubmit from './ButtonSubmit.vue'
+import { generateId } from '@/utils'
 
 const props = defineProps<{
   shopNames: string[]
@@ -70,6 +71,7 @@ watch(newShopName, () => {
 function addItem() {
   if (newItemName.value != '') {
     shoppingListsStore.addItemToList(props.listId, {
+      id: generateId(),
       name: newItemName.value,
       category: newItemCategory.value,
       shopId: '1',
