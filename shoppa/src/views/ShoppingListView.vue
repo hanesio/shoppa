@@ -88,7 +88,7 @@ const router = useRouter()
 const listId = route.params.id as string
 
 const shoppingListsStore = useShoppingListsStore()
-const fullList = shoppingListsStore.getListById(listId)
+let fullList = shoppingListsStore.getListById(listId)
 const openItems = ref<ShoppingListItem[]>([])
 const purchasedItems = ref<ShoppingListItem[]>([])
 
@@ -106,7 +106,9 @@ const showAddItemBar = ref(false)
 
 updateLists()
 
-function updateLists() {
+async function updateLists() {
+  await shoppingListsStore.listenForLists()
+  fullList = shoppingListsStore.getListById(listId)
   if (fullList) {
     openItems.value = fullList.items.filter((item) => !item.purchased)
     // Group items by shop names

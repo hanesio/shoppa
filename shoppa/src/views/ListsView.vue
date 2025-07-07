@@ -4,8 +4,8 @@
     <h1 class="text-center">Username</h1>
   </header>
   <div>
-    <ul v-if="lists.length > 0" class="flex flex-col gap-1">
-      <li v-for="list in lists" :key="list.id">
+    <ul v-if="shoppingListsStore.lists.length > 0" class="flex flex-col gap-1">
+      <li v-for="list in shoppingListsStore.lists" :key="list.id">
         <ShoppingListEntry
           @click="router.push({ name: 'shopping-list', params: { id: list.id } })"
           :name="list.name"
@@ -34,18 +34,20 @@ import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
 
 import router from '@/router'
 import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
-import { ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import type { ShoppingList } from '@/types'
 
 const shoppingListsStore = useShoppingListsStore()
-const lists = shoppingListsStore.lists
 
 const newListName = ref('')
 
-function addList() {
+onMounted(() => {
+  shoppingListsStore.listenForLists()
+})
+
+async function addList() {
   if (newListName.value.trim() === '') return
-  const id = generateId()
-  shoppingListsStore.addList({
-    id,
+  const id = await shoppingListsStore.addList({
     name: newListName.value,
     items: [],
     authors: [],

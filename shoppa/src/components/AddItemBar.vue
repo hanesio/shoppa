@@ -72,13 +72,11 @@ watch(newItemCategory, () => {
 watch(newShopName, () => {
   inputRef.value?.focus()
 })
-function addItem() {
+async function addItem() {
   if (newItemName.value != '') {
-    shoppingListsStore.addItemToList(props.listId, {
-      id: generateId(),
+    await shoppingListsStore.addItemToList(props.listId, {
       name: newItemName.value,
       category: newItemCategory.value,
-      shopId: '1',
       purchased: false,
       dateAdded: new Date().toISOString(),
       shopName: newShopName.value,

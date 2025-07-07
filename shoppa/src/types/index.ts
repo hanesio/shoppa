@@ -6,7 +6,6 @@ export interface ShoppingListItem {
   author: string
   category: string
   shopName?: string
-  shopId?: string
 }
 
 export interface ShoppingList {
