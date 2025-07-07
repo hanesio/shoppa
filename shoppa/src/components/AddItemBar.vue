@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full flex-col border-t-2 border-indigo-500 bg-white pt-1">
+  <div class="flex w-full flex-col border-b-2 border-indigo-500 bg-white pt-1">
     <div>
       <PillSelect
         :items="categoryNames"

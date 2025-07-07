@@ -11,57 +11,58 @@
       </h1>
       <ButtonTrash @click="deleteList" />
     </div>
-
-    <div class="mt-16 flex w-full flex-col justify-between gap-1 lg:flex-row">
-      <SortedShoppingList
-        @purchase="updateLists"
-        @showDetails="
-          router.push({
-            name: 'item-details',
-            params: { itemId: $event.id, listId: listId },
-          })
-        "
-        v-if="fullList.items.length > 0"
-        :sorted-lists="listsByShops"
+    <div class="mt-16">
+      <AddItemBar
+        ref="target"
+        class="z-50 transition"
+        :class="[showAddItemBar ? 'translate-y-0' : 'fixed bottom-0 left-0 translate-y-full']"
+        @addItem="updateLists"
+        :shop-names
+        :category-names
+        :list-id
+        :focus="showAddItemBar"
       />
 
-      <p v-else class="mx-auto text-center text-gray-500">Keine Artikel in dieser Liste</p>
+      <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
+        <SortedShoppingList
+          @purchase="updateLists"
+          @showDetails="
+            router.push({
+              name: 'item-details',
+              params: { itemId: $event.id, listId: listId },
+            })
+          "
+          v-if="fullList.items.length > 0"
+          :sorted-lists="listsByShops"
+        />
+
+        <p v-else class="mx-auto text-center text-gray-500">Keine Artikel in dieser Liste</p>
+      </div>
+      <details v-if="purchasedItems.length > 0">
+        <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
+        <ul class="flex flex-col gap-0.5">
+          <li v-for="item in purchasedItems" :key="item.id">
+            <PurchasedItemEntry
+              @put-back="putBack(item)"
+              @show-details="
+                router.push({
+                  name: 'item-details',
+                  params: { itemId: item.id, listId: listId },
+                })
+              "
+              :name="item.name"
+            />
+          </li>
+        </ul>
+      </details>
+
+      <button
+        class="fixed right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
+        @click="toggleAddItemBar"
+      >
+        <IconPlus class="h-8 w-8 text-white" />
+      </button>
     </div>
-    <details v-if="purchasedItems.length > 0">
-      <summary class="cursor-pointer text-lg text-indigo-500">Gekauft</summary>
-      <ul class="flex flex-col gap-0.5">
-        <li v-for="item in purchasedItems" :key="item.id">
-          <PurchasedItemEntry
-            @put-back="putBack(item)"
-            @show-details="
-              router.push({
-                name: 'item-details',
-                params: { itemId: item.id, listId: listId },
-              })
-            "
-            :name="item.name"
-          />
-        </li>
-      </ul>
-    </details>
-
-    <AddItemBar
-      ref="target"
-      class="fixed bottom-0 left-0 z-50 transition"
-      :class="[showAddItemBar ? 'translate-y-0' : 'translate-y-full']"
-      @addItem="updateLists"
-      :shop-names
-      :category-names
-      :list-id
-      :focus="showAddItemBar"
-    />
-
-    <button
-      class="fixed right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
-      @click="toggleAddItemBar"
-    >
-      <IconPlus class="h-8 w-8 text-white" />
-    </button>
   </div>
 </template>
 
