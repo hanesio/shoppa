@@ -1,7 +1,7 @@
 <template>
-  <div class="flex h-screen">
+  <div class="flex">
     <div
-      class="fixed top-0 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
+      class="fixed top-14 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
     >
       <button @click="router.push(`/lists/${listId}`)">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
@@ -12,7 +12,7 @@
       <div class="h-8 w-8"></div>
     </div>
 
-    <div class="mt-16 flex w-full flex-col justify-between gap-4">
+    <div class="flex w-full flex-col justify-between gap-4">
       <div v-if="item">
         <ShoppingListItemDetailInput
           :category="categoryStore.getCategoryByName(newItemCategory)"
@@ -60,15 +60,15 @@
 
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
-import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import ShoppingListItemDetailInput from '@/components/ShoppingListItemDetailInput.vue'
-import { useCategoryStore } from '@/stores/CategoryStore'
+import { useCategoryStore } from '@/stores/categoryStore'
 import { ref } from 'vue'
 import type { ShoppingListItem } from '@/types'
 import ButtonTrash from '@/components/ButtonTrash.vue'
 import PillSelect from '@/components/PillSelect.vue'
-import { useShopStore } from '@/stores/ShopStore'
+import { useShopStore } from '@/stores/shopStore'
 
 const router = useRouter()
 const route = useRoute()
@@ -118,9 +118,10 @@ async function updateShopName(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
 }
 async function deleteItem() {
-  // TODO
-  await shoppingListsStore.deleteItem(listId, itemId)
-  router.push(`/lists/${listId}`)
+  if (confirm('Bist du sicher, dass du diesen Artikel löschen möchtest?')) {
+    await shoppingListsStore.deleteItem(listId, itemId)
+    router.push(`/lists/${listId}`)
+  }
 }
 </script>
 

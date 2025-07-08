@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { type OrderedCategory } from '@/stores/CategoryStore'
+import { type OrderedCategory } from '@/stores/categoryStore'
 import { ref } from 'vue'
 import { computed } from 'vue'
 import IconCheck from './icons/IconCheck.vue'

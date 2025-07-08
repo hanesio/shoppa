@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { type OrderedCategory } from '@/stores/CategoryStore'
+import { type OrderedCategory } from '@/stores/categoryStore'
 import { computed } from 'vue'
 
 const props = withDefaults(

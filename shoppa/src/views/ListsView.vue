@@ -1,14 +1,19 @@
 <template>
-  <header class="flex items-center justify-center gap-2 p-4">
-    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500">H</div>
-    <h1 class="text-center">Username</h1>
-  </header>
   <div>
     <ul v-if="shoppingListsStore.lists.length > 0" class="flex flex-col gap-1">
       <li v-for="list in shoppingListsStore.lists" :key="list.id">
+        <button @click="showInvite(list.id, list.name)">Invite</button>
+
+        <ShoppingListInvite
+          v-if="currentInviteListId === list.id"
+          :list-id="list.id"
+          :list-name="list.name"
+        />
+
         <ShoppingListEntry
           @click="router.push({ name: 'shopping-list', params: { id: list.id } })"
           :name="list.name"
+          :list-id="list.id"
           :item-count="list.items.length"
         />
       </li>
@@ -28,31 +33,28 @@
 </template>
 
 <script setup lang="ts">
-import { generateId } from '@/utils'
 import ButtonSubmitSmall from '@/components/ButtonSubmitSmall.vue'
 import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
+import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
 import router from '@/router'
-import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import { onMounted, reactive, ref } from 'vue'
-import type { ShoppingList } from '@/types'
 
 const shoppingListsStore = useShoppingListsStore()
+const authStore = useAuthStore()
 
 const newListName = ref('')
+const currentInviteListId = ref<string | null>(null)
 
-onMounted(() => {
-  shoppingListsStore.listenForLists()
-})
+const showInvite = (listId: string, listName: string) => {
+  currentInviteListId.value = listId // Show invite component for this list
+}
 
 async function addList() {
   if (newListName.value.trim() === '') return
-  const id = await shoppingListsStore.addList({
-    name: newListName.value,
-    items: [],
-    authors: [],
-    dateCreated: new Date().toISOString(),
-  })
+  const id = await shoppingListsStore.addList(newListName.value)
   // Reset the input field after adding the list
   newListName.value = ''
   router.push({ name: 'shopping-list', params: { id } })

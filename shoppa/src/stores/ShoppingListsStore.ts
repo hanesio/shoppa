@@ -12,15 +12,17 @@ import {
   updateDoc,
   addDoc,
   deleteDoc,
+  arrayUnion,
 } from 'firebase/firestore'
-import { signOut } from 'firebase/auth' // Import specific auth methods as needed
+import type { Unsubscribe } from 'firebase/firestore'
 import { v4 as uuidv4 } from 'uuid'
+import { useAuthStore } from './authStore'
 
 interface ShoppingListsState {
   lists: ShoppingList[]
   isLoading: boolean
   error: string | null
-  currentUserEmail: string | null
+  _firestoreUnsubscribe: Unsubscribe | null
 }
 
 export const useShoppingListsStore = defineStore('lists', {
@@ -28,11 +30,86 @@ export const useShoppingListsStore = defineStore('lists', {
     lists: [],
     isLoading: false,
     error: null,
-    currentUserEmail: null,
+    _firestoreUnsubscribe: null as Unsubscribe | null,
   }),
 
   actions: {
-    // Action to listen for real-time list updates from Firestore
+    /**
+     * Starts listening for shopping lists. Call this when a user logs in.
+     */
+    startListeningToShoppingLists() {
+      if (this._firestoreUnsubscribe) {
+        this._firestoreUnsubscribe()
+        this._firestoreUnsubscribe = null
+        console.log('Stopped previous Firestore listener for shoppingLists.')
+      }
+      this.isLoading = true
+      this.error = null
+
+      const authStore = useAuthStore()
+      const currentUserUid = authStore.currentUser?.uid // Get the current user's UID
+
+      // CRITICAL CHANGE HERE: Add a 'where' clause to filter the query
+      if (!currentUserUid) {
+        // If no user is logged in, or UID is null, we can't query for author-specific lists.
+        // The security rules would deny this anyway.
+        console.warn(
+          'No current user UID found. Cannot start author-specific shopping lists listener.',
+        )
+        this.isLoading = false
+        this.lists = [] // Clear any old data
+
+        return // Exit the function as we cannot form a valid query
+      }
+
+      const listsColRef = collection(db, 'shoppingLists')
+      // Create a query that only requests lists where the current user is an author
+      const q = query(listsColRef, where('authors', 'array-contains', currentUserUid))
+
+      // Use this filtered query for your onSnapshot listener
+      this._firestoreUnsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          // Use 'q' here!
+          console.log('onSnapshot triggered for shoppingLists!')
+          const listsData: ShoppingList[] = []
+          snapshot.forEach((doc) => {
+            listsData.push({ id: doc.id, ...doc.data() } as ShoppingList)
+          })
+          this.lists = listsData
+          this.isLoading = false
+          console.log('Shopping lists updated in store! Count:', this.lists.length)
+        },
+        (err) => {
+          // ... (your error handling, which is good for permission-denied messages) ...
+          const authStore = useAuthStore()
+          if (err.code === 'permission-denied' && !authStore.currentUser) {
+            console.warn(
+              'Permission denied for shopping lists because no user is logged in. This is expected behavior for protected data.',
+            )
+            this.lists = []
+          } else {
+            this.error = err.message
+            console.error('Error listening to shopping lists:', err)
+          }
+          this.isLoading = false
+        },
+      )
+      console.log('Started Firestore listener for shoppingLists with author filter.')
+    },
+
+    /**
+     * Stops the shopping lists listener. Call this when a user logs out.
+     */
+    stopListeningToShoppingLists() {
+      if (this._firestoreUnsubscribe) {
+        this._firestoreUnsubscribe() // Call the unsubscribe function
+        this._firestoreUnsubscribe = null
+        this.lists = [] // Clear the lists when no longer listening
+        console.log('Stopped Firestore listener and cleared shoppingLists.')
+      }
+    },
+
     async listenForLists() {
       this.isLoading = true
       this.error = null
@@ -68,14 +145,22 @@ export const useShoppingListsStore = defineStore('lists', {
     },
 
     // Action to add a new list to Firestore
-    async addList(newListData: Omit<ShoppingList, 'id' | 'dateModified'>) {
+    async addList(listName: string) {
       this.isLoading = true
       this.error = null
       try {
+        const authStore = useAuthStore()
+        if (!authStore.currentUser) {
+          throw new Error('You must be logged in to create a list.')
+        }
+
         const listsColRef = collection(db, 'shoppingLists')
         const docRef = await addDoc(listsColRef, {
-          ...newListData,
+          name: listName,
+          authors: [authStore.currentUser.uid], // Creator is the first author
+          items: [],
           dateCreated: new Date().toISOString(),
+          dateModified: new Date().toISOString(),
         })
 
         this.isLoading = false
@@ -158,6 +243,32 @@ export const useShoppingListsStore = defineStore('lists', {
         this.error = err.message
         this.isLoading = false
         console.error('Error deleting shopping list:', err)
+      }
+    },
+
+    /**
+     * Invites a user to collaborate on a shopping list by adding their UID to the 'authors' array.
+     * @param listId The ID of the shopping list to invite to.
+     * @param invitedUserUid The UID of the user to invite.
+     */
+    async inviteUserToShoppingList(listId: string, invitedUserUid: string) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const listRef = doc(db, 'shoppingLists', listId) // Reference to the specific list document
+
+        // This ensures the invitedUserUid is added only if it's not already present.
+        await updateDoc(listRef, {
+          authors: arrayUnion(invitedUserUid),
+          dateModified: new Date().toISOString(),
+        })
+
+        this.isLoading = false
+        console.log(`User ${invitedUserUid} successfully invited to list ${listId}.`)
+      } catch (err: any) {
+        this.error = err.message
+        this.isLoading = false
+        console.error('Error inviting user to shopping list:', err)
       }
     },
 

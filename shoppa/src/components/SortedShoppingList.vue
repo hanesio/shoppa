@@ -18,8 +18,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useCategoryStore } from '@/stores/CategoryStore'
-import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
 import { type ShoppingListItem } from '@/types'
 

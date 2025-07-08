@@ -1,9 +1,9 @@
 <template>
-  <div v-if="fullList" class="flex h-screen flex-col gap-4">
+  <div v-if="fullList" class="flex flex-col gap-4">
     <div
-      class="fixed top-0 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
+      class="fixed top-14 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
     >
-      <button @click="router.push('/')">
+      <button @click="router.push('/lists')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
       <input
@@ -15,7 +15,7 @@
 
       <ButtonTrash @click="deleteList" />
     </div>
-    <div class="mt-16">
+    <div class="mt-10">
       <AddItemBar
         ref="target"
         class="z-50 transition"
@@ -60,6 +60,20 @@
           </li>
         </ul>
       </details>
+      <div>
+        <p class="py-4 text-center text-sm text-gray-400">
+          Einkauf für
+          <span
+            class="text-gray-500"
+            v-for="(authorUid, index) in fullList.authors"
+            :key="authorUid"
+          >
+            {{ getAuthorDisplayName(authorUid)
+            }}<span v-if="index < fullList.authors.length - 1">, </span>
+          </span>
+        </p>
+      </div>
+      <div class="h-24"></div>
 
       <button
         class="fixed right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
@@ -73,11 +87,12 @@
 
 <script setup lang="ts">
 import PurchasedItemEntry from '@/components/PurchasedItemEntry.vue'
-import { useCategoryStore } from '@/stores/CategoryStore'
-import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
-import { useShopStore } from '@/stores/ShopStore'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
+import { useShopStore } from '@/stores/shopStore'
+import { useAuthStore } from '../stores/authStore'
 import { type ShoppingListItem } from '@/types'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
@@ -104,6 +119,8 @@ const categoryNames = categoryStore.categories.map((category) => category.name)
 const shopStore = useShopStore()
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
+const authStore = useAuthStore()
+
 // Create a list of items grouped by shop names
 const listsByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
 
@@ -113,7 +130,6 @@ const showAddItemBar = ref(false)
 updateLists()
 
 async function updateLists() {
-  await shoppingListsStore.listenForLists()
   fullList = shoppingListsStore.getListById(listId)
   if (fullList) {
     openItems.value = fullList.items.filter((item) => !item.purchased)
@@ -155,12 +171,35 @@ async function updateListName() {
 }
 
 async function deleteList() {
-  await shoppingListsStore.deleteList(listId)
-  router.push('/')
+  if (confirm('Bist du sicher, dass du diese Einkaufsliste löschen möchtest?')) {
+    await shoppingListsStore.deleteList(listId)
+  }
+
+  router.push('/lists')
 }
 
 interface ClickOutsideEvent extends MouseEvent {}
 onClickOutside(target, (event: ClickOutsideEvent) => (showAddItemBar.value = false))
+
+// A local cache within the component for display names to prevent re-fetching/re-rendering issues
+const authorDisplayNames = reactive<{ [uid: string]: string }>({})
+
+// Function to fetch and store the display name
+const getAuthorDisplayName = (uid: string) => {
+  if (authorDisplayNames[uid]) {
+    return authorDisplayNames[uid]
+  } else {
+    // Fetch the name and update the reactive cache
+    authStore.getUserProfileByUid(uid).then((profile) => {
+      if (profile && profile.displayName) {
+        authorDisplayNames[uid] = profile.displayName
+      } else {
+        authorDisplayNames[uid] = `Unknown User (${uid.substring(0, 4)}...)` // Fallback
+      }
+    })
+    return 'Loading...' // Return a temporary string while fetching
+  }
+}
 </script>
 
 <style scoped></style>

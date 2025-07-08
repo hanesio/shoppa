@@ -30,10 +30,10 @@
 <script setup lang="ts">
 import PillSelect from '@/components/PillSelect.vue'
 import { nextTick, ref, watch } from 'vue'
-import { useShoppingListsStore } from '@/stores/ShoppingListsStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import ButtonSubmit from './ButtonSubmit.vue'
-import { generateId } from '@/utils'
-import { useCategoryStore } from '@/stores/CategoryStore'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const props = defineProps<{
   shopNames: string[]
@@ -47,6 +47,7 @@ const emit = defineEmits<{
 
 const shoppingListsStore = useShoppingListsStore()
 const categoryStore = useCategoryStore()
+const authStore = useAuthStore()
 const categoryColors = categoryStore.categories.map((category) => category.color)
 
 const newItemName = ref('')
@@ -80,7 +81,7 @@ async function addItem() {
       purchased: false,
       dateAdded: new Date().toISOString(),
       shopName: newShopName.value,
-      author: 'Max Mustermann',
+      author: authStore.currentUser?.displayName || 'nobody',
     })
 
     newItemName.value = ''
