@@ -6,9 +6,13 @@
       <button @click="router.push('/')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h1 class="bg-white py-2 text-xl text-indigo-700">
-        {{ fullList.name }}
-      </h1>
+      <input
+        type="text"
+        v-model="listName"
+        @change="updateListName"
+        class="w-full border-b-3 border-indigo-300 bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
+      />
+
       <ButtonTrash @click="deleteList" />
     </div>
     <div class="mt-16">
@@ -34,6 +38,7 @@
           "
           v-if="fullList.items.length > 0"
           :sorted-lists="listsByShops"
+          :list-id
         />
 
         <p v-else class="mx-auto text-center text-gray-500">Keine Artikel in dieser Liste</p>
@@ -89,6 +94,7 @@ const listId = route.params.id as string
 
 const shoppingListsStore = useShoppingListsStore()
 let fullList = shoppingListsStore.getListById(listId)
+const listName = ref(fullList ? fullList.name : 'no list name')
 const openItems = ref<ShoppingListItem[]>([])
 const purchasedItems = ref<ShoppingListItem[]>([])
 
@@ -118,12 +124,8 @@ async function updateLists() {
   }
 }
 
-function purchase(item: ShoppingListItem) {
-  item.purchased = true
-  updateLists()
-}
-function putBack(item: ShoppingListItem) {
-  item.purchased = false
+async function putBack(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, purchased: false })
   updateLists()
 }
 
@@ -148,8 +150,12 @@ function toggleAddItemBar() {
   showAddItemBar.value = true
 }
 
-function deleteList() {
-  shoppingListsStore.deleteList(listId)
+async function updateListName() {
+  await shoppingListsStore.updateListName(listId, listName.value)
+}
+
+async function deleteList() {
+  await shoppingListsStore.deleteList(listId)
   router.push('/')
 }
 

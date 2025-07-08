@@ -24,6 +24,7 @@ import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
 import { type ShoppingListItem } from '@/types'
 
 const props = defineProps<{
+  listId: string
   sortedLists: { shopName: string; items: ShoppingListItem[] }[]
 }>()
 
@@ -35,8 +36,8 @@ const emit = defineEmits<{
 const categoryStore = useCategoryStore()
 const shoppingListsStore = useShoppingListsStore()
 
-function purchase(item: ShoppingListItem) {
-  shoppingListsStore.purchaseItem(item.id)
+async function purchase(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(props.listId, { ...item, purchased: true })
   emit('purchase')
 }
 </script>

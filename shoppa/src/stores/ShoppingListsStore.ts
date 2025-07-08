@@ -11,6 +11,7 @@ import {
   setDoc,
   updateDoc,
   addDoc,
+  deleteDoc,
 } from 'firebase/firestore'
 import { signOut } from 'firebase/auth' // Import specific auth methods as needed
 import { v4 as uuidv4 } from 'uuid'
@@ -114,73 +115,110 @@ export const useShoppingListsStore = defineStore('lists', {
         console.log(`Item "${itemToAdd.name}" added to list "${listId}".`)
       } catch (err: any) {
         this.error = err.message
-
         this.isLoading = false
-
         console.error('Error adding item to shopping list:', err)
       }
     },
 
-    deleteList(listId: string) {
-      this.lists = this.lists.filter((list) => list.id !== listId)
-    },
-    updateList(listId: string, updatedList: ShoppingList) {
-      const index = this.lists.findIndex((list) => list.id === listId)
-      if (index !== -1) {
-        this.lists[index] = { ...this.lists[index], ...updatedList }
-        this.lists[index].dateModified = new Date().toISOString().split('T')[0] // Update the modified date
-      }
-    },
-    updateItem(listId: string, itemId: string, updatedItem: ShoppingListItem) {
-      const list = this.lists.find((list) => list.id === listId)
-      if (list) {
-        const itemIndex = list.items.findIndex((item) => item.id === itemId)
-        if (itemIndex !== -1) {
-          //The item at itemIndex is updated with new values from updatedItem, while keeping unchanged properties intact.
-          list.items[itemIndex] = { ...list.items[itemIndex], ...updatedItem }
-          // Update the modified date of the list
-          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+    async updateListName(listId: string, newListName: string) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
+
+        // Find the current list in our store's state
+        const currentList = this.lists.find((list) => list.id === listId)
+        if (!currentList) {
+          throw new Error(`Shopping list with ID ${listId} not found in local store.`)
         }
+
+        await updateDoc(listRef, {
+          name: newListName,
+          dateModified: new Date().toISOString(),
+        })
+
+        this.isLoading = false
+        console.log(`List "${listId}"'s name changed to "${newListName}".`)
+      } catch (err: any) {
+        this.error = err.message
       }
     },
-    updateItemName(listId: string, itemId: string, updatedName: string) {
-      const list = this.lists.find((list) => list.id === listId)
-      if (list) {
-        const itemIndex = list.items.findIndex((item) => item.id === itemId)
-        if (itemIndex !== -1) {
-          list.items[itemIndex].name = updatedName
-          // Update the modified date of the list
-          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+
+    async deleteList(listId: string) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
+        await deleteDoc(listRef) // Delete the document!
+
+        this.isLoading = false
+        console.log(`Shopping list with ID ${listId} deleted successfully.`)
+        // No need to manually remove from this.shoppingLists; onSnapshot will handle it.
+      } catch (err: any) {
+        this.error = err.message
+        this.isLoading = false
+        console.error('Error deleting shopping list:', err)
+      }
+    },
+
+    /**
+     * Updates an existing item within the 'items' array of a specific shopping list document.
+     * @param listId The ID of the shopping list document.
+     * @param updatedItem The complete updated item object (must include its itemId).
+     */
+    async updateItem(listId: string, updatedItem: ShoppingListItem) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
+
+        // Find the current list in our store's state
+        const currentList = this.lists.find((list) => list.id === listId)
+        if (!currentList) {
+          throw new Error(`Shopping list with ID ${listId} not found in local store.`)
         }
+
+        // Create a new array where the matching item is replaced with the updated one
+        const newItemsArray = currentList.items.map((item) =>
+          item.id === updatedItem.id ? updatedItem : item,
+        )
+
+        await updateDoc(listRef, {
+          items: newItemsArray, // Update the entire 'items' array field
+          dateModified: new Date().toISOString(),
+        })
+
+        this.isLoading = false
+        console.log(`Item "${updatedItem.name}" updated in list "${listId}".`)
+      } catch (err: any) {
+        this.error = err.message
       }
     },
-    updateItemCategory(listId: string, itemId: string, updatedCategory: string) {
-      const list = this.lists.find((list) => list.id === listId)
-      if (list) {
-        const itemIndex = list.items.findIndex((item) => item.id === itemId)
-        if (itemIndex !== -1) {
-          list.items[itemIndex].category = updatedCategory
-          // Update the modified date of the list
-          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+
+    async deleteItem(listId: string, itemId: string) {
+      this.isLoading = true
+      this.error = null
+      try {
+        const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
+
+        // Find the current list in our store's state
+        const currentList = this.lists.find((list) => list.id === listId)
+        if (!currentList) {
+          throw new Error(`Shopping list with ID ${listId} not found in local store.`)
         }
-      }
-    },
-    updateItemShop(listId: string, itemId: string, updatedShopName: string) {
-      const list = this.lists.find((list) => list.id === listId)
-      if (list) {
-        const itemIndex = list.items.findIndex((item) => item.id === itemId)
-        if (itemIndex !== -1) {
-          list.items[itemIndex].shopName = updatedShopName
-          // Update the modified date of the list
-          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
-        }
-      }
-    },
-    deleteItem(listId: string, itemId: string) {
-      const list = this.lists.find((list) => list.id === listId)
-      if (list) {
-        list.items = list.items.filter((item) => item.id !== itemId)
-        list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
+
+        // Create a new array where the matching item is replaced with the updated one
+        const newItemsArray = currentList.items.filter((item) => item.id != itemId)
+
+        await updateDoc(listRef, {
+          items: newItemsArray, // Update the entire 'items' array field
+          dateModified: new Date().toISOString(),
+        })
+
+        this.isLoading = false
+        console.log('Item deleted')
+      } catch (err: any) {
+        this.error = err.message
       }
     },
     purchaseItem(itemId: string) {
@@ -206,45 +244,3 @@ export const useShoppingListsStore = defineStore('lists', {
     },
   },
 })
-
-// [
-//         {
-//           id: '1',
-//           name: 'Einkaufsliste',
-//           authors: ['Hannes'],
-//           items: [
-//             {
-//               id: '1',
-//               name: 'Apfel',
-//               purchased: false,
-//               dateAdded: '2023-10-01',
-//               author: 'Hannes',
-//               category: 'Obst & Gemüse',
-//               shopName: 'REWE',
-//               shopId: '1',
-//             },
-//             {
-//               id: '2',
-//               name: 'Netz Zwiebeln',
-//               purchased: false,
-//               dateAdded: '2023-10-01',
-//               author: 'Hannes',
-//               category: 'Obst & Gemüse',
-//               shopName: 'REWE',
-//               shopId: '1',
-//             },
-//             {
-//               id: '3',
-//               name: 'Wurstaufschnitt',
-//               purchased: false,
-//               dateAdded: '2023-10-01',
-//               author: 'Hannes',
-//               category: 'Fleisch & Wurst',
-//               shopName: 'REWE',
-//               shopId: '1',
-//             },
-//           ],
-//           dateCreated: '2023-10-01',
-//           dateModified: '2023-10-01',
-//         },
-//       ],

@@ -6,24 +6,23 @@
       <button @click="router.push(`/lists/${listId}`)">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h1 class="bg-white py-2 text-xl text-indigo-700">
+      <h1 class="border-b-3 border-transparent bg-white py-2 text-xl text-indigo-700">
         {{ listName }}
       </h1>
       <div class="h-8 w-8"></div>
     </div>
 
     <div class="mt-16 flex w-full flex-col justify-between gap-4">
-      <div>
+      <div v-if="item">
         <ShoppingListItemDetailInput
-          v-if="item"
-          :category="categoryStore.getCategoryByName(item.category)"
+          :category="categoryStore.getCategoryByName(newItemCategory)"
           v-model="itemName"
-          :purchased="item.purchased"
-          @updateItem="shoppingListsStore.updateItemName(listId, itemId, itemName)"
+          :purchased
+          @updateItem="updateItemName(item)"
           @purchase="purchase(item)"
           @put-back="putBack(item)"
         />
-        <p v-else class="text-gray-500">Artikel nicht gefunden</p>
+
         <div class="flex flex-col gap-8 p-4">
           <div>
             <h2 class="text-lg text-indigo-500">Kategorie</h2>
@@ -32,7 +31,7 @@
               :items="categoryNames"
               v-model="newItemCategory"
               :colors="categoryColors"
-              @change="shoppingListsStore.updateItemCategory(listId, itemId, newItemCategory)"
+              @change="updateCategory(item)"
             />
           </div>
           <div>
@@ -41,11 +40,12 @@
               text-size="lg"
               :items="shopNames"
               v-model="newShopName"
-              @change="shoppingListsStore.updateItemShop(listId, itemId, newShopName)"
+              @change="updateShopName(item)"
             />
           </div>
         </div>
       </div>
+      <p v-else class="text-gray-500">Artikel nicht gefunden</p>
 
       <div class="flex items-center justify-between p-3">
         <ul>
@@ -80,6 +80,7 @@ const listName = shoppingListsStore.getListById(listId)?.name || 'Liste'
 const item = shoppingListsStore.getItemById(listId, itemId)
 
 const itemName = ref(item ? item.name : '')
+const purchased = ref(item ? item.purchased : false)
 const dateAdded = ref(
   item
     ? new Date(item.dateAdded).toLocaleDateString('de-DE', {
@@ -99,15 +100,26 @@ const categoryColors = categoryStore.categories.map((category) => category.color
 const shopStore = useShopStore()
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
-function purchase(item: ShoppingListItem) {
-  item.purchased = true
+async function purchase(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, purchased: true })
+  purchased.value = true
 }
-function putBack(item: ShoppingListItem) {
-  item.purchased = false
-  // shoppingListsStore.updateItem(listId, itemId, item.name)
+async function putBack(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, purchased: false })
+  purchased.value = false
 }
-function deleteItem() {
-  shoppingListsStore.deleteItem(listId, itemId)
+async function updateItemName(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, name: itemName.value })
+}
+async function updateCategory(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, category: newItemCategory.value })
+}
+async function updateShopName(item: ShoppingListItem) {
+  await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
+}
+async function deleteItem() {
+  // TODO
+  await shoppingListsStore.deleteItem(listId, itemId)
   router.push(`/lists/${listId}`)
 }
 </script>
