@@ -4,7 +4,6 @@
       <li v-for="list in shoppingListsStore.lists" :key="list.id">
         <ShoppingListInvite
           @close="closeInvite()"
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           :list-id="list.id"
           :list-name="list.name"
           :dialog-open="currentInviteListId === list.id"

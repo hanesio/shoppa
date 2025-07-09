@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { auth, googleProvider, db } from '../firebase'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
-import { useShoppingListsStore } from './shoppingListsStore'
+import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 
 interface UserProfile {
   uid: string

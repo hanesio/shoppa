@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="authStore.authLoading">Checking authentication...</div>
+    <div class="text-center" v-if="authStore.authLoading">überprüfe Authentifizierung...</div>
     <div
       v-else-if="authStore.currentUser"
       class="relative flex items-center justify-between gap-2 bg-indigo-900 p-3"
@@ -13,10 +13,10 @@
         :src="authStore.currentUser.photoURL ?? undefined"
         alt="profile picture"
       />
-      <button class="cursor-pointer rounded-md text-indigo-400" @click="signOut">Sign Out</button>
+      <button class="cursor-pointer rounded-md text-indigo-400" @click="signOut">ausloggen</button>
     </div>
     <div v-else class="flex items-center justify-center gap-2 p-2">
-      <p>not signed in</p>
+      <p>Shoppa</p>
     </div>
     <div v-if="authStore.authError" class="mt-2 text-red-500">{{ authStore.authError }}</div>
   </div>
@@ -25,10 +25,8 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
-import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 const authStore = useAuthStore()
 const router = useRouter()
-const shoppingListsStore = useShoppingListsStore()
 
 async function signOut() {
   await authStore.signOutUser()

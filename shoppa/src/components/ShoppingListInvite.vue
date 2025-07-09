@@ -1,7 +1,12 @@
 <template>
+  <div
+    v-if="show"
+    class="absolute top-0 left-0 z-20 h-screen w-screen bg-black opacity-50"
+    teleport="body"
+  ></div>
   <dialog
     v-if="show"
-    class="dialog flex h-46 w-80 flex-col rounded-sm bg-gray-100 px-4 py-3"
+    class="dialog absolute top-1/2 left-1/2 z-30 flex h-46 w-80 -translate-x-1/2 -translate-y-1/2 flex-col rounded-sm bg-gray-100 px-4 py-3"
     ref="dialogRef"
   >
     <h4>
@@ -110,8 +115,8 @@ const handleInvite = async () => {
 </script>
 
 <style scoped>
-dialog::backdrop {
+/* dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
-}
+} */
 </style>
