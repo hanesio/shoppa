@@ -20,6 +20,9 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   actions: {
+    /**
+     * Authenticates a Firebase client using a popup-based OAuth authentication flow and creates a user profile Firestores's 'users' collection
+     */
     async signInWithGoogle() {
       this.authLoading = true
       this.authError = null
@@ -52,7 +55,9 @@ export const useAuthStore = defineStore('auth', {
         this.authLoading = false
       }
     },
-
+    /**
+     * Signs out the current user.
+     **/
     async signOutUser() {
       this.authLoading = true
       this.authError = null
@@ -67,8 +72,9 @@ export const useAuthStore = defineStore('auth', {
         this.authLoading = false
       }
     },
-
-    // Listen for auth state changes (important for maintaining login status)
+    /**
+     * Listens for auth state changes (important for maintaining login status and synchronizing listening for shopping lists).
+     */
     initAuthListener() {
       onAuthStateChanged(auth, (user) => {
         const shoppingListsStore = useShoppingListsStore()
@@ -91,6 +97,11 @@ export const useAuthStore = defineStore('auth', {
         this.authLoading = false // Auth state is determined, no longer loading
       })
     },
+
+    /**
+     * Retrieves a user's profile (including displayName/username) by their email.
+     * @param email Email of the user to be retrieved.
+     */
     async findUserUidByEmail(email: string): Promise<string | null> {
       try {
         const usersColRef = collection(db, 'users')
@@ -113,9 +124,11 @@ export const useAuthStore = defineStore('auth', {
         return null
       }
     },
+
     /**
      * Retrieves a user's profile (including displayName/username) by their UID.
      * Uses a cache to avoid unnecessary Firestore reads.
+     * @param uid UID to get the user documents reference
      */
     async getUserProfileByUid(uid: string): Promise<UserProfile | null> {
       // 1. Check the cache first

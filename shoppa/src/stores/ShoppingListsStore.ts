@@ -3,12 +3,10 @@ import { type ShoppingList, type ShoppingListItem } from '@/types'
 import { db, auth } from '../firebase' // Import your initialized Firebase services
 import {
   collection,
-  getDocs,
   onSnapshot,
   query,
   where,
   doc,
-  setDoc,
   updateDoc,
   addDoc,
   deleteDoc,
@@ -49,17 +47,15 @@ export const useShoppingListsStore = defineStore('lists', {
       const authStore = useAuthStore()
       const currentUserUid = authStore.currentUser?.uid // Get the current user's UID
 
-      // CRITICAL CHANGE HERE: Add a 'where' clause to filter the query
       if (!currentUserUid) {
         // If no user is logged in, or UID is null, we can't query for author-specific lists.
-        // The security rules would deny this anyway.
         console.warn(
           'No current user UID found. Cannot start author-specific shopping lists listener.',
         )
         this.isLoading = false
         this.lists = [] // Clear any old data
 
-        return // Exit the function as we cannot form a valid query
+        return
       }
 
       const listsColRef = collection(db, 'shoppingLists')
@@ -70,7 +66,6 @@ export const useShoppingListsStore = defineStore('lists', {
       this._firestoreUnsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          // Use 'q' here!
           console.log('onSnapshot triggered for shoppingLists!')
           const listsData: ShoppingList[] = []
           snapshot.forEach((doc) => {
@@ -81,7 +76,6 @@ export const useShoppingListsStore = defineStore('lists', {
           console.log('Shopping lists updated in store! Count:', this.lists.length)
         },
         (err) => {
-          // ... (your error handling, which is good for permission-denied messages) ...
           const authStore = useAuthStore()
           if (err.code === 'permission-denied' && !authStore.currentUser) {
             console.warn(
@@ -110,41 +104,10 @@ export const useShoppingListsStore = defineStore('lists', {
       }
     },
 
-    async listenForLists() {
-      this.isLoading = true
-      this.error = null
-
-      // const user = auth.currentUser
-      // if (!user) {
-      //   this.error = 'No user logged in to fetch lists for.'
-      //   this.isLoading = false
-      //   return
-      // }
-
-      const listsColRef = collection(db, 'shoppingLists') // Reference to your 'lists' collection
-
-      // Set up a real-time listener
-      onSnapshot(
-        listsColRef,
-        (snapshot) => {
-          const listsData: any[] = []
-          snapshot.forEach((doc) => {
-            listsData.push({ id: doc.id, ...doc.data() })
-          })
-
-          this.lists = listsData
-          this.isLoading = false
-          console.log('Lists updated in store! ')
-        },
-        (err) => {
-          this.error = err.message
-          this.isLoading = false
-          console.error('Error listening to lists:', err)
-        },
-      )
-    },
-
-    // Action to add a new list to Firestore
+    /**
+     * Adds a new list to the shoppingList collection.
+     * @param listName The name of the shopping list document.
+     */
     async addList(listName: string) {
       this.isLoading = true
       this.error = null
@@ -184,8 +147,7 @@ export const useShoppingListsStore = defineStore('lists', {
       try {
         const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
         const itemToAdd: ShoppingListItem = { ...newItemData, id: uuidv4() } // Add a unique ID
-        // Option 1 (Recommended for nested objects): Read current list, modify items array, then update.
-        // This ensures full control over array contents and is robust for complex item objects.
+
         const currentList = this.lists.find((list) => list.id === listId)
         if (!currentList) {
           throw new Error(`Shopping list with ID ${listId} not found in local store.`)
@@ -205,6 +167,11 @@ export const useShoppingListsStore = defineStore('lists', {
       }
     },
 
+    /**
+     * Updates the name of a specific shopping list document.
+     * @param listId The ID of the shopping list document.
+     * @param newListName name to change to.
+     */
     async updateListName(listId: string, newListName: string) {
       this.isLoading = true
       this.error = null
@@ -229,16 +196,20 @@ export const useShoppingListsStore = defineStore('lists', {
       }
     },
 
+    /**
+     * Deletes a shopping list document.
+     * @param listId The ID of the shopping list document to be deleted.
+     */
     async deleteList(listId: string) {
       this.isLoading = true
       this.error = null
       try {
         const listRef = doc(db, 'shoppingLists', listId) // Get reference to the specific list document
-        await deleteDoc(listRef) // Delete the document!
+        await deleteDoc(listRef) // Delete the document
 
         this.isLoading = false
         console.log(`Shopping list with ID ${listId} deleted successfully.`)
-        // No need to manually remove from this.shoppingLists; onSnapshot will handle it.
+        // No need to manually remove from this.lists; onSnapshot will handle it.
       } catch (err: any) {
         this.error = err.message
         this.isLoading = false
@@ -306,6 +277,11 @@ export const useShoppingListsStore = defineStore('lists', {
       }
     },
 
+    /**
+     * Deletes an existing item within the 'items' array of a specific shopping list document.
+     * @param listId The ID of the shopping list document.
+     * @param itemId The ID of the item to be deleted.
+     */
     async deleteItem(listId: string, itemId: string) {
       this.isLoading = true
       this.error = null
@@ -330,16 +306,6 @@ export const useShoppingListsStore = defineStore('lists', {
         console.log('Item deleted')
       } catch (err: any) {
         this.error = err.message
-      }
-    },
-    purchaseItem(itemId: string) {
-      for (const list of this.lists) {
-        const item = list.items.find((item) => item.id === itemId)
-        if (item) {
-          item.purchased = true
-          list.dateModified = new Date().toISOString().split('T')[0] // Update the modified date
-          break
-        }
       }
     },
   },
