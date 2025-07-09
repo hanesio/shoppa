@@ -1,9 +1,9 @@
 <template>
-  <div
+  <!-- <div
     v-if="show"
     class="absolute top-0 left-0 z-20 h-screen w-screen bg-black opacity-50"
     teleport="body"
-  ></div>
+  ></div> -->
   <dialog
     v-if="show"
     class="dialog absolute top-1/2 left-1/2 z-30 flex h-46 w-80 -translate-x-1/2 -translate-y-1/2 flex-col rounded-sm bg-gray-100 px-4 py-3"

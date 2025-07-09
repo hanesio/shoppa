@@ -10,8 +10,8 @@
         />
 
         <ShoppingListEntry
-          @show-list="router.push({ name: 'shopping-list', params: { id: list.id } })"
-          @show-invite="showInvite(list.id, list.name)"
+          @show-list="showList(list.id)"
+          @show-invite="showInvite(list.id)"
           :name="list.name"
           :list-id="list.id"
           :item-count="list.items.length"
@@ -34,22 +34,22 @@
 
 <script setup lang="ts">
 import ButtonSubmitSmall from '@/components/ButtonSubmitSmall.vue'
-import IconInvite from '@/components/icons/IconInvite.vue'
 import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
 import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
-import router from '@/router'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useShoppingListsStore } from '@/stores/shoppingListsStore'
-import { onMounted, reactive, ref } from 'vue'
+import { ref } from 'vue'
 
+const router = useRouter()
 const shoppingListsStore = useShoppingListsStore()
 const authStore = useAuthStore()
 
 const newListName = ref('')
 const currentInviteListId = ref<string | null>(null)
 
-const showInvite = (listId: string, listName: string) => {
+const showInvite = (listId: string) => {
   currentInviteListId.value = listId
 }
 const closeInvite = () => {
@@ -62,6 +62,10 @@ async function addList() {
   // Reset the input field after adding the list
   newListName.value = ''
   router.push({ name: 'shopping-list', params: { id } })
+}
+
+function showList(listId: string) {
+  router.push({ name: 'shopping-list', params: { id: listId } })
 }
 </script>
 

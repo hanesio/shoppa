@@ -5,7 +5,7 @@
     <button @click="$emit('showInvite')" class="mr-10 flex w-16 cursor-pointer justify-center">
       <IconInvite class="size-8 text-indigo-500" />
     </button>
-    <div @click="$emit('showList')" class="flex w-full justify-between">
+    <div @click="showList" class="flex w-full justify-between">
       <p>{{ name }}</p>
       <p>{{ itemCount }}</p>
     </div>
@@ -24,5 +24,9 @@ const emit = defineEmits<{
   (e: 'showInvite'): void
   (e: 'showList'): void
 }>()
+
+function showList() {
+  emit('showList')
+}
 </script>
 <style scoped></style>

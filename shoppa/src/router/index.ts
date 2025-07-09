@@ -20,11 +20,13 @@ const router = createRouter({
       path: '/lists/:id',
       name: 'shopping-list',
       component: () => import('../views/ShoppingListView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/lists/:listId/items/:itemId',
       name: 'item-details',
       component: () => import('../views/ItemDetailsView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/:pathMatch(.*)*', // Catch-all route for 404s

@@ -6,8 +6,10 @@
     </div>
 
     <ul class="flex flex-col gap-0.5">
-      <li v-for="item in list.items" :key="item.id">
+      <li v-for="(item, index) in list.items" :key="item.id">
         <ShoppingListItemEntry
+          class="cascade"
+          :style="`animation-delay:${0.1 * index}s`"
           @purchase="purchase(item)"
           @showDetails="emit('showDetails', item)"
           :name="item.name"
@@ -41,3 +43,22 @@ async function purchase(item: ShoppingListItem) {
   emit('purchase')
 }
 </script>
+
+<style scoped>
+.cascade {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: cascadeIn 0.3s ease-out forwards;
+}
+
+@keyframes cascadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+</style>
