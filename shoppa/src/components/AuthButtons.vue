@@ -11,7 +11,7 @@
       <img
         class="absolute top-1/2 left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full"
         :src="authStore.currentUser.photoURL ?? undefined"
-        alt=""
+        alt="profile picture"
       />
       <button class="cursor-pointer rounded-md text-indigo-400" @click="signOut">Sign Out</button>
     </div>

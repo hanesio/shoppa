@@ -2,16 +2,17 @@
   <div>
     <ul v-if="shoppingListsStore.lists.length > 0" class="flex flex-col gap-1">
       <li v-for="list in shoppingListsStore.lists" :key="list.id">
-        <button @click="showInvite(list.id, list.name)">Invite</button>
-
         <ShoppingListInvite
-          v-if="currentInviteListId === list.id"
+          @close="closeInvite()"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           :list-id="list.id"
           :list-name="list.name"
+          :dialog-open="currentInviteListId === list.id"
         />
 
         <ShoppingListEntry
-          @click="router.push({ name: 'shopping-list', params: { id: list.id } })"
+          @show-list="router.push({ name: 'shopping-list', params: { id: list.id } })"
+          @show-invite="showInvite(list.id, list.name)"
           :name="list.name"
           :list-id="list.id"
           :item-count="list.items.length"
@@ -34,6 +35,7 @@
 
 <script setup lang="ts">
 import ButtonSubmitSmall from '@/components/ButtonSubmitSmall.vue'
+import IconInvite from '@/components/icons/IconInvite.vue'
 import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
 import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
@@ -49,7 +51,10 @@ const newListName = ref('')
 const currentInviteListId = ref<string | null>(null)
 
 const showInvite = (listId: string, listName: string) => {
-  currentInviteListId.value = listId // Show invite component for this list
+  currentInviteListId.value = listId
+}
+const closeInvite = () => {
+  currentInviteListId.value = ''
 }
 
 async function addList() {
