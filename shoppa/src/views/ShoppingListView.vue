@@ -20,7 +20,6 @@
         ref="target"
         class="z-50 transition"
         :class="[showAddItemBar ? 'translate-y-0' : 'fixed bottom-0 left-0 translate-y-full']"
-        @addItem="updateLists"
         :shop-names
         :category-names
         :list-id
@@ -29,7 +28,6 @@
 
       <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
         <SortedShoppingList
-          @purchase="updateLists"
           @showDetails="
             router.push({
               name: 'item-details',
@@ -92,7 +90,7 @@ import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import { useShopStore } from '@/stores/shopStore'
 import { useAuthStore } from '../stores/authStore'
 import { type ShoppingListItem } from '@/types'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
@@ -110,8 +108,6 @@ const listId = route.params.id as string
 const shoppingListsStore = useShoppingListsStore()
 let fullList = shoppingListsStore.getListById(listId)
 const listName = ref(fullList ? fullList.name : 'no list name')
-const openItems = ref<ShoppingListItem[]>([])
-const purchasedItems = ref<ShoppingListItem[]>([])
 
 const categoryStore = useCategoryStore()
 const categoryNames = categoryStore.categories.map((category) => category.name)
@@ -121,30 +117,33 @@ const shopNames = shopStore.shops.map((shop) => shop.name)
 
 const authStore = useAuthStore()
 
-// Create a list of items grouped by shop names
-const listsByShops = ref<{ shopName: string; items: ShoppingListItem[] }[]>([])
-
 const target = useTemplateRef<HTMLElement>('target')
 const showAddItemBar = ref(false)
 
-updateLists()
-
-async function updateLists() {
-  fullList = shoppingListsStore.getListById(listId)
-  if (fullList) {
-    openItems.value = fullList.items.filter((item) => !item.purchased)
-    // Group items by shop names
-    listsByShops.value = sortListByShops(openItems.value)
-    // Filter purchased items
-    purchasedItems.value = fullList.items.filter((item) => item.purchased)
+const openItems = computed(() => {
+  const list = shoppingListsStore.getListById(listId)
+  if (list) {
+    return list.items.filter((item) => !item.purchased)
   }
-}
+  return []
+})
+
+const listsByShops = computed(() => {
+  return sortListByShops(openItems.value)
+})
+
+const purchasedItems = computed(() => {
+  const list = shoppingListsStore.getListById(listId)
+  if (list) {
+    return list.items.filter((item) => item.purchased)
+  }
+  return []
+})
 
 async function putBack(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, purchased: false })
-  updateLists()
 }
-
+// Create a list of items grouped by shop names
 function sortListByShops(items: ShoppingListItem[]) {
   const result: { shopName: string; items: ShoppingListItem[] }[] = []
   shopNames.forEach((shopName) => {
