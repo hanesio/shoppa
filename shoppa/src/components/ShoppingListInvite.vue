@@ -1,49 +1,42 @@
 <template>
-  <!-- <div
-    v-if="show"
-    class="absolute top-0 left-0 z-20 h-screen w-screen bg-black opacity-50"
-    teleport="body"
-  ></div> -->
-  <dialog
-    v-if="show"
-    class="dialog absolute top-1/2 left-1/2 z-30 flex h-46 w-80 -translate-x-1/2 -translate-y-1/2 flex-col rounded-sm bg-gray-100 px-4 py-3"
-    ref="dialogRef"
-  >
-    <h4>
-      Lade jemanden zu <span class="font-semibold text-indigo-500">{{ listName }}</span> ein
-    </h4>
-    <div class="my-4">
-      <input
-        class="w-full border-b-2 border-indigo-500 focus:outline-0"
-        @keyup.enter="handleInvite"
-        v-model="inviteEmail"
-        type="email"
-        placeholder="E-Mail eines Kollaborateurs "
-      />
-      <p
-        v-if="inviteStatus"
-        class="text-sm"
-        :class="{
-          'text-green-500': inviteStatus === 'success',
-          'text-red-500': inviteStatus === 'error',
-        }"
-      >
-        {{ inviteMessage }}
-      </p>
-    </div>
-    <div class="absolute right-4 bottom-4 flex gap-2">
-      <button
-        class="cursor-pointer rounded-md bg-indigo-500 px-2 py-0.5 text-white hover:bg-indigo-600"
-        @click="handleInvite"
-      >
-        einladen
-      </button>
-      <button
-        class="cursor-pointer rounded-md bg-gray-200 px-2 py-0.5 hover:bg-gray-300"
-        @click="$emit('close')"
-      >
-        abbrechen
-      </button>
+  <dialog ref="dialogRef" class="rounded-sm">
+    <div class="flex h-46 w-80 flex-col bg-gray-100 px-4 py-3">
+      <h4>
+        Lade jemanden zu <span class="font-semibold text-indigo-500">{{ listName }}</span> ein
+      </h4>
+      <div class="my-4">
+        <input
+          class="w-full border-b-2 border-indigo-500 focus:outline-0"
+          @keyup.enter="handleInvite"
+          v-model="inviteEmail"
+          type="email"
+          placeholder="E-Mail eines Kollaborateurs "
+        />
+        <p
+          v-if="inviteStatus"
+          class="text-sm"
+          :class="{
+            'text-green-500': inviteStatus === 'success',
+            'text-red-500': inviteStatus === 'error',
+          }"
+        >
+          {{ inviteMessage }}
+        </p>
+      </div>
+      <div class="absolute right-4 bottom-4 flex gap-2">
+        <button
+          class="cursor-pointer rounded-md bg-indigo-500 px-2 py-0.5 text-white hover:bg-indigo-600"
+          @click="handleInvite"
+        >
+          einladen
+        </button>
+        <button
+          class="cursor-pointer rounded-md bg-gray-200 px-2 py-0.5 hover:bg-gray-300"
+          @click="$emit('close')"
+        >
+          abbrechen
+        </button>
+      </div>
     </div>
   </dialog>
 </template>
@@ -72,6 +65,7 @@ const show = computed(() => {
 
 watch(show, () => {
   if (dialogRef.value) {
+    console.log(show.value)
     show.value ? dialogRef.value.showModal() : dialogRef.value.close()
   }
 })
@@ -114,9 +108,9 @@ const handleInvite = async () => {
 }
 </script>
 
-<style scoped>
-/* dialog::backdrop {
+<style>
+dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-} */
+  backdrop-filter: blur(0.5px);
+}
 </style>

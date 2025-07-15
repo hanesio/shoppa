@@ -2,16 +2,9 @@
   <div>
     <ul v-if="shoppingListsStore.lists.length > 0" class="flex flex-col gap-1">
       <li v-for="list in shoppingListsStore.lists" :key="list.id">
-        <ShoppingListInvite
-          @close="closeInvite()"
-          :list-id="list.id"
-          :list-name="list.name"
-          :dialog-open="currentInviteListId === list.id"
-        />
-
         <ShoppingListEntry
           @show-list="showList(list.id)"
-          @show-invite="showInvite(list.id)"
+          @show-invite="showInvite(list.id, list.name)"
           :name="list.name"
           :list-id="list.id"
           :item-count="list.items.length"
@@ -30,6 +23,13 @@
       @keyup.esc="newListName = ''"
     /><ButtonSubmitSmall @click="addList" />
   </div>
+  <ShoppingListInvite
+    class="m-auto"
+    @close="closeInvite()"
+    :list-id="currentInviteListId"
+    :list-name="currentInviteListName"
+    :dialog-open
+  />
 </template>
 
 <script setup lang="ts">
@@ -38,7 +38,6 @@ import ShoppingListEntry from '@/components/ShoppingListEntry.vue'
 import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore'
 import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import { ref } from 'vue'
 
@@ -46,13 +45,18 @@ const router = useRouter()
 const shoppingListsStore = useShoppingListsStore()
 
 const newListName = ref('')
-const currentInviteListId = ref<string | null>(null)
+const currentInviteListId = ref('')
+const currentInviteListName = ref('')
 
-const showInvite = (listId: string) => {
+const dialogOpen = ref(false)
+
+const showInvite = (listId: string, listName: string) => {
+  dialogOpen.value = true
   currentInviteListId.value = listId
+  currentInviteListName.value = listName
 }
 const closeInvite = () => {
-  currentInviteListId.value = ''
+  dialogOpen.value = false
 }
 
 async function addList() {

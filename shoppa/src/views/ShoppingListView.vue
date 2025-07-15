@@ -122,10 +122,10 @@ const openItems = computed(() => {
   return []
 })
 
-const listName = computed(() => {
-  const list = shoppingListsStore.getListById(listId)
-  return list ? list.name : '-'
+const list = computed(() => {
+  return shoppingListsStore.getListById(listId)
 })
+const listName = ref(list.value?.name || '-')
 
 const listsByShops = computed(() => {
   return sortListByShops(openItems.value)

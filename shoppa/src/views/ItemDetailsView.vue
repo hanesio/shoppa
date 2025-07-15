@@ -84,9 +84,7 @@ const item = computed(() => {
   return shoppingListsStore.getItemById(listId, itemId)
 })
 
-const itemName = computed(() => {
-  return item.value ? item.value.name : ''
-})
+const itemName = ref(item.value ? item.value.name : '')
 const purchased = ref(item.value ? item.value.purchased : false)
 const dateAdded = ref(
   item.value

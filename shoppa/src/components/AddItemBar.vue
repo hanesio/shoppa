@@ -1,21 +1,22 @@
 <template>
   <div class="flex w-full flex-col border-b-2 border-indigo-500 bg-white pt-1">
-    <div class="flex flex-col">
+    <div class="flex flex-col gap-4 py-4">
       <PillSelect
-        class="rounded-xl bg-indigo-300 px-1 py-1"
+        :items="shopNames"
+        v-model="newShopName"
+        :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
+      />
+      <!-- <select>
+        <option value=""></option>
+      </select> -->
+      <PillSelect
         :items="categoryNames"
         :colors="categoryColors"
         v-model="newItemCategory"
         :color="{ bg: 'bg-blue-200', text: 'text-blue-900', border: 'border-blue-400' }"
       />
-
-      <PillSelect
-        class="rounded-t-xl bg-gray-300 px-1 py-1"
-        :items="shopNames"
-        v-model="newShopName"
-        :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
-      />
     </div>
+
     <div class="justiy-end flex items-center gap-2 bg-gray-100 px-4 py-1">
       <input
         ref="inputRef"

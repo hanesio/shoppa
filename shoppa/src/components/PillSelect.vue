@@ -1,7 +1,11 @@
 <template>
   <div
     class="w-full gap-1 py-0.5"
-    :class="textSize === 'lg' ? 'grid grid-cols-2' : 'grid grid-cols-3'"
+    :class="
+      textSize === 'lg'
+        ? 'grid grid-cols-2'
+        : 'hide-scrollbar flex items-center gap-1 overflow-scroll'
+    "
   >
     <CategoryPill
       v-for="(item, index) in items"
@@ -47,4 +51,12 @@ const updateValue = (value: string) => {
   emit('change')
 }
 </script>
-<style scoped></style>
+<style scoped>
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+</style>
