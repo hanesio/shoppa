@@ -1,5 +1,5 @@
 <template>
-  <div v-if="fullList" class="flex flex-col gap-4">
+  <div v-if="openItems || purchasedItems" class="flex flex-col gap-4">
     <div
       class="fixed top-14 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
     >
@@ -34,7 +34,7 @@
               params: { itemId: $event.id, listId: listId },
             })
           "
-          v-if="fullList.items.length > 0"
+          v-if="listsByShops.length > 0"
           :sorted-lists="listsByShops"
           :list-id
         />
@@ -61,19 +61,15 @@
       <div>
         <p class="py-4 text-center text-sm text-gray-400">
           Einkauf für
-          <span
-            class="text-gray-500"
-            v-for="(authorUid, index) in fullList.authors"
-            :key="authorUid"
-          >
-            {{ getAuthorDisplayName(authorUid)
-            }}<span v-if="index < fullList.authors.length - 1">, </span>
+          <span class="text-gray-500" v-for="(authorUid, index) in authors" :key="authorUid">
+            {{ getAuthorDisplayName(authorUid) }}<span v-if="index < authors.length - 1">, </span>
           </span>
         </p>
       </div>
       <div class="h-24"></div>
 
       <button
+        v-if="!showAddItemBar"
         class="fixed right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
         @click="toggleAddItemBar"
       >
@@ -106,8 +102,6 @@ const router = useRouter()
 const listId = route.params.id as string
 
 const shoppingListsStore = useShoppingListsStore()
-let fullList = shoppingListsStore.getListById(listId)
-const listName = ref(fullList ? fullList.name : 'no list name')
 
 const categoryStore = useCategoryStore()
 const categoryNames = categoryStore.categories.map((category) => category.name)
@@ -128,16 +122,23 @@ const openItems = computed(() => {
   return []
 })
 
+const listName = computed(() => {
+  const list = shoppingListsStore.getListById(listId)
+  return list ? list.name : '-'
+})
+
 const listsByShops = computed(() => {
   return sortListByShops(openItems.value)
 })
 
 const purchasedItems = computed(() => {
   const list = shoppingListsStore.getListById(listId)
-  if (list) {
-    return list.items.filter((item) => item.purchased)
-  }
-  return []
+  return list ? list.items.filter((item) => item.purchased) : []
+})
+
+const authors = computed(() => {
+  const list = shoppingListsStore.getListById(listId)
+  return list ? list.authors : []
 })
 
 async function putBack(item: ShoppingListItem) {

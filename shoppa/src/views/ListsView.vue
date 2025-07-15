@@ -44,7 +44,6 @@ import { ref } from 'vue'
 
 const router = useRouter()
 const shoppingListsStore = useShoppingListsStore()
-const authStore = useAuthStore()
 
 const newListName = ref('')
 const currentInviteListId = ref<string | null>(null)

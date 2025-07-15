@@ -64,7 +64,7 @@ import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import ShoppingListItemDetailInput from '@/components/ShoppingListItemDetailInput.vue'
 import { useCategoryStore } from '@/stores/categoryStore'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { ShoppingListItem } from '@/types'
 import ButtonTrash from '@/components/ButtonTrash.vue'
 import PillSelect from '@/components/PillSelect.vue'
@@ -76,14 +76,21 @@ const listId = route.params.listId as string
 const itemId = route.params.itemId as string
 
 const shoppingListsStore = useShoppingListsStore()
-const listName = shoppingListsStore.getListById(listId)?.name || 'Liste'
-const item = shoppingListsStore.getItemById(listId, itemId)
+const listName = computed(() => {
+  const list = shoppingListsStore.getListById(listId)
+  return list ? list.name : '-'
+})
+const item = computed(() => {
+  return shoppingListsStore.getItemById(listId, itemId)
+})
 
-const itemName = ref(item ? item.name : '')
-const purchased = ref(item ? item.purchased : false)
+const itemName = computed(() => {
+  return item.value ? item.value.name : ''
+})
+const purchased = ref(item.value ? item.value.purchased : false)
 const dateAdded = ref(
-  item
-    ? new Date(item.dateAdded).toLocaleDateString('de-DE', {
+  item.value
+    ? new Date(item.value.dateAdded).toLocaleDateString('de-DE', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -91,8 +98,8 @@ const dateAdded = ref(
     : 'Unbekannt',
 )
 
-const newItemCategory = ref(item?.category || 'Sonstiges')
-const newShopName = ref(item?.shopName || 'Supermarkt')
+const newItemCategory = ref(item.value?.category || 'Sonstiges')
+const newShopName = ref(item.value?.shopName || 'Supermarkt')
 
 const categoryStore = useCategoryStore()
 const categoryNames = categoryStore.categories.map((category) => category.name)

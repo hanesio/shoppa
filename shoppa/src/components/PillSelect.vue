@@ -1,7 +1,7 @@
 <template>
   <div
     class="w-full gap-1 py-0.5"
-    :class="textSize === 'lg' ? 'grid grid-cols-2' : 'flex flex-wrap items-center'"
+    :class="textSize === 'lg' ? 'grid grid-cols-2' : 'grid grid-cols-3'"
   >
     <CategoryPill
       v-for="(item, index) in items"
