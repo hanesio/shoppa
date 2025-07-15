@@ -64,7 +64,7 @@ import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import ShoppingListItemDetailInput from '@/components/ShoppingListItemDetailInput.vue'
 import { useCategoryStore } from '@/stores/categoryStore'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { ShoppingListItem } from '@/types'
 import ButtonTrash from '@/components/ButtonTrash.vue'
 import PillSelect from '@/components/PillSelect.vue'
@@ -85,6 +85,9 @@ const item = computed(() => {
 })
 
 const itemName = ref(item.value ? item.value.name : '')
+watch(item, () => {
+  if (item.value) itemName.value = item.value.name
+})
 const purchased = ref(item.value ? item.value.purchased : false)
 const dateAdded = ref(
   item.value

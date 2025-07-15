@@ -7,6 +7,7 @@
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
       <input
+        v-if="list"
         type="text"
         v-model="listName"
         @change="updateListName"
@@ -86,7 +87,7 @@ import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import { useShopStore } from '@/stores/shopStore'
 import { useAuthStore } from '../stores/authStore'
 import { type ShoppingListItem } from '@/types'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
@@ -125,8 +126,11 @@ const openItems = computed(() => {
 const list = computed(() => {
   return shoppingListsStore.getListById(listId)
 })
-const listName = ref(list.value?.name || '-')
 
+const listName = ref(list.value ? list.value.name : '-')
+watch(list, () => {
+  if (list.value) listName.value = list.value.name
+})
 const listsByShops = computed(() => {
   return sortListByShops(openItems.value)
 })

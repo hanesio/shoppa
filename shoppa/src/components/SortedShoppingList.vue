@@ -51,6 +51,9 @@ async function purchase(item: ShoppingListItem) {
   animation: cascadeIn 0.3s ease-out forwards;
 }
 
+.slice {
+  animation: sliceOut 0.3s ease-in;
+}
 @keyframes cascadeIn {
   0% {
     opacity: 0;
@@ -60,5 +63,33 @@ async function purchase(item: ShoppingListItem) {
     opacity: 1;
     transform: translateY(0px);
   }
+}
+
+@keyframes sliceOut {
+  0% {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1, 0);
+  }
+}
+
+.fade-list-enter-active,
+.fade-list-leave-active {
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
+}
+.fade-list-enter-from,
+.fade-list-leave-to {
+  opacity: 0;
+  transform: scaleY(0.95);
+}
+.fade-list-enter-to,
+.fade-list-leave-from {
+  opacity: 1;
+  transform: scaleY(1);
 }
 </style>
