@@ -17,16 +17,6 @@
       <ButtonTrash @click="deleteList" />
     </div>
     <div class="mt-10">
-      <AddItemBar
-        ref="target"
-        class="z-50 transition"
-        :class="[showAddItemBar ? 'translate-y-0' : 'fixed bottom-0 left-0 translate-y-full']"
-        :shop-names
-        :category-names
-        :list-id
-        :focus="showAddItemBar"
-      />
-
       <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
         <SortedShoppingList
           @showDetails="
@@ -67,14 +57,31 @@
           </span>
         </p>
       </div>
-      <div class="h-24"></div>
+      <div v-if="!showAddItemBar" class="h-24"></div>
+      <Teleport to="body">
+        <AddItemBar
+          v-if="showAddItemBar"
+          class="relative z-20 transition"
+          :shop-names
+          :category-names
+          :list-id
+          :focus="showAddItemBar"
+          :bar-open="showAddItemBar"
+          @close="showAddItemBar = false"
+        />
+      </Teleport>
+
+      <div
+        v-if="showAddItemBar"
+        class="absolute top-0 left-0 z-10 h-screen w-screen bg-black opacity-50"
+      ></div>
 
       <button
         v-if="!showAddItemBar"
-        class="fixed right-5 bottom-5 flex h-16 w-16 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
+        class="fixed right-5 bottom-5 flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
         @click="toggleAddItemBar"
       >
-        <IconPlus class="h-8 w-8 text-white" />
+        <IconPlus class="h-7 w-7 text-white" />
       </button>
     </div>
   </div>
@@ -92,7 +99,6 @@ import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
-import { onClickOutside } from '@vueuse/core'
 import { useTemplateRef } from 'vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
@@ -112,7 +118,6 @@ const shopNames = shopStore.shops.map((shop) => shop.name)
 
 const authStore = useAuthStore()
 
-const target = useTemplateRef<HTMLElement>('target')
 const showAddItemBar = ref(false)
 
 const openItems = computed(() => {
@@ -181,9 +186,6 @@ async function deleteList() {
 
   router.push('/lists')
 }
-
-interface ClickOutsideEvent extends MouseEvent {}
-onClickOutside(target, (event: ClickOutsideEvent) => (showAddItemBar.value = false))
 
 // A local cache within the component for display names to prevent re-fetching/re-rendering issues
 const authorDisplayNames = reactive<{ [uid: string]: string }>({})

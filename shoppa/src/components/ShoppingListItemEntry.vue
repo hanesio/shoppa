@@ -6,7 +6,7 @@
       class="absolute left-0 my-2 h-4/5 w-2 rounded-l-sm rounded-r-xl"
       :class="colorClass.bg"
     ></div>
-    <span @click="$emit('showDetails')" class="w-full py-2" :class="colorClass.text">{{
+    <span @click="$emit('showDetails')" class="w-full py-2 hyphens-auto" :class="colorClass.text">{{
       name
     }}</span>
     <button

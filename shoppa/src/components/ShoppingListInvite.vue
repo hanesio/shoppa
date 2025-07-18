@@ -65,7 +65,6 @@ const show = computed(() => {
 
 watch(show, () => {
   if (dialogRef.value) {
-    console.log(show.value)
     show.value ? dialogRef.value.showModal() : dialogRef.value.close()
   }
 })
