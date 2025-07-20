@@ -1,5 +1,5 @@
 <template>
-  <div class="z-30 border-b-2 border-indigo-500 bg-white">
+  <div class="w-full border-b-2 border-indigo-500 bg-white">
     <div class="flex flex-col" ref="contentRef">
       <div class="flex flex-col gap-4 py-4">
         <PillSelect

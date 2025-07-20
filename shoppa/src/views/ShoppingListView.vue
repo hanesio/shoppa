@@ -1,7 +1,7 @@
 <template>
   <div v-if="openItems || purchasedItems" class="flex flex-col gap-4">
     <div
-      class="fixed top-14 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
+      class="fixed top-12 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
     >
       <button @click="router.push('/lists')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
@@ -11,11 +11,22 @@
         type="text"
         v-model="listName"
         @change="updateListName"
-        class="w-full border-b-3 border-indigo-300 bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
+        class="w-full border-b-2 border-indigo-300 bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
       />
 
       <ButtonTrash @click="deleteList" />
     </div>
+    <AddItemBar
+      class="fixed top-28 left-0 z-20 transition duration-300 ease-in-out"
+      :class="[showAddItemBar ? 'translate-y-0' : '-translate-y-70']"
+      :shop-names
+      :category-names
+      :list-id
+      :focus="showAddItemBar"
+      :bar-open="showAddItemBar"
+      @close="showAddItemBar = false"
+    />
+
     <div class="mt-10">
       <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
         <SortedShoppingList
@@ -58,22 +69,10 @@
         </p>
       </div>
       <div v-if="!showAddItemBar" class="h-24"></div>
-      <Teleport to="body">
-        <AddItemBar
-          v-if="showAddItemBar"
-          class="relative z-20 transition"
-          :shop-names
-          :category-names
-          :list-id
-          :focus="showAddItemBar"
-          :bar-open="showAddItemBar"
-          @close="showAddItemBar = false"
-        />
-      </Teleport>
 
       <div
         v-if="showAddItemBar"
-        class="absolute top-0 left-0 z-10 h-screen w-screen bg-black opacity-50"
+        class="fixed top-0 left-0 z-10 h-screen w-screen bg-black opacity-50"
       ></div>
 
       <button
