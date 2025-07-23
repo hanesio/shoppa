@@ -1,22 +1,24 @@
 <template>
-  <div class="w-full" v-for="list in sortedLists" :key="list.shopName">
+  <div class="w-full" v-for="list in powerlist" :key="list.shopName">
     <div class="flex items-center gap-2">
       <p class="text-indigo-500">{{ list.shopName }}</p>
       <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
     </div>
-
-    <ul class="flex flex-col gap-0.5">
-      <li v-for="(item, index) in list.items" :key="item.id">
-        <ShoppingListItemEntry
-          class="cascade"
-          :style="`animation-delay:${0.1 * index}s`"
-          @purchase="purchase(item)"
-          @showDetails="emit('showDetails', item)"
-          :name="item.name"
-          :category="categoryStore.getCategoryByName(item.category)"
-        />
-      </li>
-    </ul>
+    <div v-for="itemlist in list.categories">
+      <ul class="flex flex-col gap-0.5">
+        <p>{{ itemlist.category }}</p>
+        <li v-for="(item, index) in itemlist.items" :key="item.id">
+          <ShoppingListItemEntry
+            class="cascade"
+            :style="`animation-delay:${0.1 * index}s`"
+            @purchase="purchase(item)"
+            @showDetails="emit('showDetails', item)"
+            :name="item.name"
+            :category="categoryStore.getCategoryByName(item.category)"
+          />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -24,6 +26,7 @@ import { useCategoryStore } from '@/stores/categoryStore'
 import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
 import { type ShoppingListItem } from '@/types'
+import { computed } from 'vue'
 
 const props = defineProps<{
   listId: string
@@ -38,9 +41,54 @@ const emit = defineEmits<{
 const categoryStore = useCategoryStore()
 const shoppingListsStore = useShoppingListsStore()
 
+const powerlist = computed(() => {
+  return formatByShopAndCategory(props.sortedLists)
+})
+
+console.log(powerlist.value)
+
 async function purchase(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(props.listId, { ...item, purchased: true })
   emit('purchase')
+}
+
+/**
+ * Formatiert die Listen so, dass sie zuerst nach Geschäften und dann innerhalb jedes Geschäfts nach Kategorien gruppiert sind.
+ * @param {SortedList[]} sortedLists - Das ursprüngliche Array der nach Geschäften sortierten Listen.
+ * @returns {ShopCategorizedList[]} Ein Array von Objekten, die Geschäfte repräsentieren,
+ * wobei jedes Geschäft ein Array von Kategorien enthält und jede Kategorie ein Array von Artikeln.
+ */
+function formatByShopAndCategory(sortedLists) {
+  /** @type {ShopCategorizedList[]} */
+  const result = []
+
+  sortedLists.forEach((shopList) => {
+    /** @type {Object.<string, ShoppingListItem[]>} */
+    const categoriesMap = {} // Temporäre Map zum Gruppieren der Artikel dieses Shops nach Kategorie
+
+    shopList.items.forEach((item) => {
+      const category = item.category
+
+      if (!categoriesMap[category]) {
+        categoriesMap[category] = []
+      }
+      categoriesMap[category].push(item)
+    })
+
+    // Wandle die temporäre Map in das gewünschte Array-Format um
+    const categoriesArray = Object.keys(categoriesMap).map((categoryName) => ({
+      category: categoryName,
+      items: categoriesMap[categoryName],
+    }))
+
+    // Füge das Geschäft mit seinen kategorisierten Artikeln zum Endergebnis hinzu
+    result.push({
+      shopName: shopList.shopName,
+      categories: categoriesArray,
+    })
+  })
+
+  return result
 }
 </script>
 

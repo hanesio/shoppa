@@ -54,14 +54,15 @@ const barRef = ref<HTMLDialogElement>()
 const contentRef = ref<HTMLDialogElement>()
 const inputRef = ref<HTMLInputElement | null>(null)
 
-const newItemName = ref('')
-const newItemCategory = ref('Sonstiges') // Default category
-const newShopName = ref('ALDI')
-
+const newShopName = ref(props.shopNames[0] || 'ALDI')
 const categoryNames = computed(() => {
   const shopType = shopStore.getTypeByShop(newShopName.value)
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
 })
+
+const newItemName = ref('')
+const newItemCategory = ref(categoryNames.value ? categoryNames.value[0] : 'Sonstiges')
+
 const categoryColors = computed(() => {
   if (categoryNames.value)
     return categoryStore.categories
@@ -96,6 +97,8 @@ watch(newItemCategory, () => {
   inputRef.value?.focus()
 })
 watch(newShopName, () => {
+  if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
+  console.log(newItemCategory.value)
   inputRef.value?.focus()
 })
 async function addItem() {

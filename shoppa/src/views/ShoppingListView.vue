@@ -73,7 +73,7 @@
 
       <button
         v-if="!showAddItemBar"
-        class="fixed right-5 bottom-5 flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
+        class="fixed right-5 bottom-5 z-10 flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-indigo-500 p-2 text-center text-4xl active:scale-90"
         @click="toggleAddItemBar"
       >
         <IconPlus class="h-7 w-7 text-white" />
@@ -102,7 +102,6 @@ import { useRoute } from 'vue-router'
 import SortedShoppingList from '@/components/SortedShoppingList.vue'
 import AddItemBar from '@/components/AddItemBar.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
-import { useTemplateRef } from 'vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
 import ButtonTrash from '@/components/ButtonTrash.vue'

@@ -24,6 +24,7 @@ export const useShopStore = defineStore('shops', {
         { name: 'Rossmann', type: 'Drogerie', order: 7 },
         { name: 'Netto', type: 'Supermarkt', order: 8 },
         { name: 'LIDL', type: 'Supermarkt', order: 9 },
+        { name: 'Alpis Eiscafé', type: 'Eisdiele', order: 10 },
       ],
     }
   },

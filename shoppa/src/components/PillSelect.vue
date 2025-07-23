@@ -18,19 +18,12 @@
       @click="updateValue(item)"
     />
   </div>
-  <div
-    v-else
-    class="py-0.5"
-    :class="textSize === 'lg' ? 'grid grid-cols-2' : 'hide-scrollbar items-center'"
-  >
-    <CategoryPill name="Sonstiges" :selected="true" :color="defaultColor" :size="textSize" />
-  </div>
 </template>
 
 <script setup lang="ts">
 import { useCategoryStore } from '@/stores/categoryStore'
 import CategoryPill from './CategoryPill.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 const props = defineProps<{
   items?: string[]
   textSize?: 'sm' | 'md' | 'lg'
@@ -48,7 +41,9 @@ const emit = defineEmits<{
 }>()
 
 const categoryStore = useCategoryStore()
-const selected = ref(props.modelValue)
+const selected = computed(() => {
+  return props.modelValue
+})
 const defaultColor = {
   bg: 'bg-gray-100',
   text: 'text-black',
@@ -56,7 +51,7 @@ const defaultColor = {
 }
 
 const updateValue = (value: string) => {
-  selected.value = value
+  // selected.value = value
   emit('update:modelValue', value)
   emit('change')
 }

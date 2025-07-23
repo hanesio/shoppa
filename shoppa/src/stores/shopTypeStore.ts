@@ -42,11 +42,11 @@ export const useShopTypeStore = defineStore('types', {
         },
         {
           name: 'Apotheke',
-          categories: [],
+          categories: ['Sonstiges'],
         },
         {
           name: 'Bäckerei',
-          categories: [],
+          categories: ['Brot', 'Brötchen', 'Kuchen'],
         },
         {
           name: 'Baumarkt',
@@ -60,6 +60,36 @@ export const useShopTypeStore = defineStore('types', {
             'Bauen & Renovieren',
             'Auto',
             'Fahrrad',
+          ],
+        },
+        {
+          name: 'Möbelhaus',
+          categories: [
+            'Möbel',
+            'Küche',
+            'Kleinaufbewahrung & Organisation',
+            'Licht & Elektro',
+            'Baby & Kind',
+            'Bad',
+            'Betten & Matratzen',
+            'Dekoration',
+            'Outdoor',
+            'Pflanzen',
+            'Sofas & Sessel',
+            'Speisen & Getränke',
+            'Tische & Stühle',
+          ],
+        },
+        {
+          name: 'Eisdiele',
+          categories: [
+            '1er Waffel',
+            '2er Waffel',
+            '3er Waffel',
+            '1er Becher',
+            '2er Becher',
+            '3er Becher',
+            'Kreation',
           ],
         },
         {

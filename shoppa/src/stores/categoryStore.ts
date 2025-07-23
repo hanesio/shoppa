@@ -369,6 +369,36 @@ export const useCategoryStore = defineStore('categories', {
           },
           order: 34,
         },
+        {
+          name: 'Brot',
+          color: {
+            text: 'text-amber-800',
+            bg: 'bg-amber-200',
+            border: 'border-orange-400',
+            hover: 'hover:bg-orange-300',
+          },
+          order: 35,
+        },
+        {
+          name: 'Brötchen',
+          color: {
+            text: 'text-orange-800',
+            bg: 'bg-orange-200',
+            border: 'border-orange-400',
+            hover: 'hover:bg-orange-300',
+          },
+          order: 36,
+        },
+        {
+          name: 'Kuchen',
+          color: {
+            text: 'text-orange-800',
+            bg: 'bg-orange-200',
+            border: 'border-orange-400',
+            hover: 'hover:bg-orange-300',
+          },
+          order: 37,
+        },
       ],
     }
   },

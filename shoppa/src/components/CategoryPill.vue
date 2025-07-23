@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex h-4 w-full cursor-pointer items-center justify-center rounded-full px-1 transition-colors duration-200 ease-in-out"
+    class="flex h-4 w-full max-w-max cursor-pointer items-center justify-center rounded-full px-1 transition-colors duration-200 ease-in-out"
     :class="[
       selected
         ? 'font-semibold' + ' ' + color.bg + ' ' + color.border + ' ' + color.text
