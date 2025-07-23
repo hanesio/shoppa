@@ -39,10 +39,11 @@ import ButtonSubmit from './ButtonSubmit.vue'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { useAuthStore } from '@/stores/authStore'
 import { onClickOutside } from '@vueuse/core'
+import { useShopTypeStore } from '@/stores/shopTypeStore'
+import { useShopStore } from '@/stores/shopStore'
 
 const props = defineProps<{
   shopNames: string[]
-  categoryNames: string[]
   listId: string
   focus: boolean
   barOpen: boolean
@@ -54,7 +55,10 @@ const emit = defineEmits<{
 
 const shoppingListsStore = useShoppingListsStore()
 const categoryStore = useCategoryStore()
+const shopStore = useShopStore()
+const shopTypeStore = useShopTypeStore()
 const authStore = useAuthStore()
+
 const categoryColors = categoryStore.categories.map((category) => category.color)
 const barRef = ref<HTMLDialogElement>()
 const contentRef = ref<HTMLDialogElement>()
@@ -63,6 +67,11 @@ const inputRef = ref<HTMLInputElement | null>(null)
 const newItemName = ref('')
 const newItemCategory = ref('Sonstiges') // Default category
 const newShopName = ref('Supermarkt')
+
+const categoryNames = computed(() => {
+  const shopType = shopStore.getTypeByShop(newShopName.value)
+  if (shopType) return shopTypeStore.getCategoriesByType(shopType)
+})
 
 const show = computed(() => {
   return props.barOpen

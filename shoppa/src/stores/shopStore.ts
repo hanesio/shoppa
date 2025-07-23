@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 interface OrderedShop {
   name: string
+  type: string
   order: number
 }
 
@@ -13,20 +14,23 @@ export const useShopStore = defineStore('shops', {
   state: (): ShopState => {
     return {
       shops: [
-        { name: 'Supermarkt', order: 0 },
-        { name: 'REWE', order: 1 },
-        { name: 'ALDI', order: 2 },
-        { name: 'LIDL', order: 3 },
-        { name: 'DM', order: 4 },
-        { name: 'Rossmann', order: 5 },
-        { name: 'EDEKA', order: 6 },
+        { name: 'ALDI', type: 'Supermarkt', order: 0 },
+        { name: 'DM', type: 'Drogerie', order: 1 },
+        { name: 'Reffeling', type: 'Bäckerei', order: 2 },
+        { name: 'EDEKA', type: 'Supermarkt', order: 3 },
+        { name: 'Apotheke', type: 'Apotheke', order: 4 },
+        { name: 'Hagebau', type: 'Baumarkt', order: 5 },
+        { name: 'IKEA', type: 'Möbelhaus', order: 6 },
+        { name: 'Rossmann', type: 'Drogerie', order: 7 },
+        { name: 'Netto', type: 'Supermarkt', order: 8 },
+        { name: 'LIDL', type: 'Supermarkt', order: 9 },
       ],
     }
   },
   actions: {
-    addShop(name: string) {
+    addShop(name: string, type: string) {
       const newOrder = this.shops.length + 1
-      this.shops.push({ name, order: newOrder })
+      this.shops.push({ name, type, order: newOrder })
     },
     removeShop(name: string) {
       this.shops = this.shops.filter((shop) => shop.name !== name)
@@ -38,6 +42,9 @@ export const useShopStore = defineStore('shops', {
     },
     getShopByOrder: (state) => {
       return (order: number) => state.shops.find((shop) => shop.order === order)
+    },
+    getTypeByShop: (state) => {
+      return (name: string) => state.shops.find((shop) => shop.name === name)?.type
     },
   },
 })

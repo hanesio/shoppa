@@ -23,7 +23,7 @@
 import CategoryPill from './CategoryPill.vue'
 import { ref } from 'vue'
 const props = defineProps<{
-  items: string[]
+  items?: string[]
   textSize?: 'sm' | 'md' | 'lg'
   modelValue: string
   colors?: {
