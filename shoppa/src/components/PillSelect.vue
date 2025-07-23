@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="items && items.length > 0"
     class="w-full gap-1 py-0.5"
     :class="
       textSize === 'lg'
@@ -8,18 +9,26 @@
     "
   >
     <CategoryPill
-      v-for="(item, index) in items"
+      v-for="item in items"
       :key="item"
       :name="item"
-      :color="colors?.[index] || defaultColor"
+      :color="categoryStore.getCategoryByName(item)?.color || defaultColor"
       :selected="item === selected"
       :size="textSize"
       @click="updateValue(item)"
     />
   </div>
+  <div
+    v-else
+    class="py-0.5"
+    :class="textSize === 'lg' ? 'grid grid-cols-2' : 'hide-scrollbar items-center'"
+  >
+    <CategoryPill name="Sonstiges" :selected="true" :color="defaultColor" :size="textSize" />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useCategoryStore } from '@/stores/categoryStore'
 import CategoryPill from './CategoryPill.vue'
 import { ref } from 'vue'
 const props = defineProps<{
@@ -38,6 +47,7 @@ const emit = defineEmits<{
   (e: 'change'): void
 }>()
 
+const categoryStore = useCategoryStore()
 const selected = ref(props.modelValue)
 const defaultColor = {
   bg: 'bg-gray-100',

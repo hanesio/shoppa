@@ -25,6 +25,15 @@
 
         <div class="flex flex-col gap-8 p-4">
           <div>
+            <h2 class="text-lg text-indigo-500">Geschäft</h2>
+            <PillSelect
+              text-size="lg"
+              :items="shopNames"
+              v-model="newShopName"
+              @change="updateShopName(item)"
+            />
+          </div>
+          <div>
             <h2 class="text-lg text-indigo-500">Kategorie</h2>
             <PillSelect
               text-size="lg"
@@ -32,15 +41,6 @@
               v-model="newItemCategory"
               :colors="categoryColors"
               @change="updateCategory(item)"
-            />
-          </div>
-          <div>
-            <h2 class="text-lg text-indigo-500">Geschäft</h2>
-            <PillSelect
-              text-size="lg"
-              :items="shopNames"
-              v-model="newShopName"
-              @change="updateShopName(item)"
             />
           </div>
         </div>
@@ -69,6 +69,7 @@ import type { ShoppingListItem } from '@/types'
 import ButtonTrash from '@/components/ButtonTrash.vue'
 import PillSelect from '@/components/PillSelect.vue'
 import { useShopStore } from '@/stores/shopStore'
+import { useShopTypeStore } from '@/stores/shopTypeStore'
 
 const router = useRouter()
 const route = useRoute()
@@ -76,6 +77,7 @@ const listId = route.params.listId as string
 const itemId = route.params.itemId as string
 
 const shoppingListsStore = useShoppingListsStore()
+const shopTypeStore = useShopTypeStore()
 const listName = computed(() => {
   const list = shoppingListsStore.getListById(listId)
   return list ? list.name : '-'
@@ -103,9 +105,18 @@ const newItemCategory = ref(item.value?.category || 'Sonstiges')
 const newShopName = ref(item.value?.shopName || 'Supermarkt')
 
 const categoryStore = useCategoryStore()
-const categoryNames = categoryStore.categories.map((category) => category.name)
-const categoryColors = categoryStore.categories.map((category) => category.color)
 const shopStore = useShopStore()
+const categoryNames = computed(() => {
+  const shopType = shopStore.getTypeByShop(newShopName.value)
+  if (shopType) return shopTypeStore.getCategoriesByType(shopType)
+  else return []
+})
+const categoryColors = computed(() => {
+  return categoryStore.categories
+    .filter((category) => categoryNames.value!.includes(category.name)) // TODO: make secure
+    .map((category) => category.color)
+})
+
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
 async function purchase(item: ShoppingListItem) {

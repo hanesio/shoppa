@@ -1,5 +1,8 @@
 <template>
-  <div v-if="openItems || purchasedItems" class="flex flex-col gap-4">
+  <div
+    v-if="openItems || purchasedItems"
+    class="relative flex min-h-[calc(100vh_-_72px)] flex-col gap-4"
+  >
     <div
       class="fixed top-12 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
     >
@@ -60,15 +63,8 @@
           </li>
         </ul>
       </details>
-      <div>
-        <p class="py-4 text-center text-sm text-gray-400">
-          Einkauf für
-          <span class="text-gray-500" v-for="(authorUid, index) in authors" :key="authorUid">
-            {{ getAuthorDisplayName(authorUid) }}<span v-if="index < authors.length - 1">, </span>
-          </span>
-        </p>
-      </div>
-      <div v-if="!showAddItemBar" class="h-24"></div>
+
+      <div class="h-24"></div>
 
       <div
         v-if="showAddItemBar"
@@ -83,6 +79,14 @@
         <IconPlus class="h-7 w-7 text-white" />
       </button>
     </div>
+    <footer class="absolute bottom-0 w-full">
+      <p class="py-4 text-center text-sm text-gray-400">
+        Einkauf für
+        <span class="text-gray-500" v-for="(authorUid, index) in authors" :key="authorUid">
+          {{ getAuthorDisplayName(authorUid) }}<span v-if="index < authors.length - 1">, </span>
+        </span>
+      </p>
+    </footer>
   </div>
 </template>
 

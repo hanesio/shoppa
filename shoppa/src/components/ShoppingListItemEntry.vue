@@ -17,13 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { type OrderedCategory } from '@/stores/categoryStore'
+import { type ColouredCategory } from '@/stores/categoryStore'
 import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
     name: string
-    category?: OrderedCategory
+    category?: ColouredCategory
   }>(),
   {
     category: () => ({

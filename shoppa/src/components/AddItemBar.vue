@@ -2,18 +2,9 @@
   <div class="w-full border-b-2 border-indigo-500 bg-white">
     <div class="flex flex-col" ref="contentRef">
       <div class="flex flex-col gap-4 py-4">
-        <PillSelect
-          :items="shopNames"
-          v-model="newShopName"
-          :color="{ bg: 'bg-rose-200', text: 'text-rose-900', border: 'border-rose-400' }"
-        />
+        <PillSelect :items="shopNames" v-model="newShopName" />
 
-        <PillSelect
-          :items="categoryNames"
-          :colors="categoryColors"
-          v-model="newItemCategory"
-          :color="{ bg: 'bg-blue-200', text: 'text-blue-900', border: 'border-blue-400' }"
-        />
+        <PillSelect :items="categoryNames" v-model="newItemCategory" />
       </div>
 
       <div class="justiy-end flex items-center gap-2 bg-gray-100 px-4 py-1">
@@ -59,18 +50,25 @@ const shopStore = useShopStore()
 const shopTypeStore = useShopTypeStore()
 const authStore = useAuthStore()
 
-const categoryColors = categoryStore.categories.map((category) => category.color)
 const barRef = ref<HTMLDialogElement>()
 const contentRef = ref<HTMLDialogElement>()
 const inputRef = ref<HTMLInputElement | null>(null)
 
 const newItemName = ref('')
 const newItemCategory = ref('Sonstiges') // Default category
-const newShopName = ref('Supermarkt')
+const newShopName = ref('ALDI')
 
 const categoryNames = computed(() => {
   const shopType = shopStore.getTypeByShop(newShopName.value)
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
+})
+const categoryColors = computed(() => {
+  if (categoryNames.value)
+    return categoryStore.categories
+      .filter((category) => categoryNames.value!.includes(category.name)) // TODO: make secure
+      .map((category) => category.color)
+
+  return []
 })
 
 const show = computed(() => {
