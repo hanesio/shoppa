@@ -17,14 +17,14 @@
 </template>
 
 <script setup lang="ts">
-import { type OrderedCategory } from '@/stores/categoryStore'
+import { type ColouredCategory } from '@/stores/categoryStore'
 import { ref } from 'vue'
 import { computed } from 'vue'
 import IconCheck from './icons/IconCheck.vue'
 
 const props = withDefaults(
   defineProps<{
-    category?: OrderedCategory
+    category?: ColouredCategory
     purchased?: boolean
     modelValue: string
   }>(),
