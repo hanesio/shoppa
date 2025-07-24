@@ -399,6 +399,76 @@ export const useCategoryStore = defineStore('categories', {
           },
           order: 37,
         },
+        {
+          name: '1er Waffel',
+          color: {
+            text: 'text-orange-800',
+            bg: 'bg-orange-200',
+            border: 'border-orange-400',
+            hover: 'hover:bg-orange-300',
+          },
+          order: 38,
+        },
+        {
+          name: '2er Waffel',
+          color: {
+            text: 'text-amber-800',
+            bg: 'bg-amber-200',
+            border: 'border-amber-400',
+            hover: 'hover:bg-amber-300',
+          },
+          order: 39,
+        },
+        {
+          name: '3er Waffel',
+          color: {
+            text: 'text-yellow-800',
+            bg: 'bg-yellow-200',
+            border: 'border-yellow-400',
+            hover: 'hover:bg-yellow-300',
+          },
+          order: 40,
+        },
+        {
+          name: '1er Becher',
+          color: {
+            text: 'text-cyan-800',
+            bg: 'bg-cyan-200',
+            border: 'border-cyan-400',
+            hover: 'hover:bg-cyan-300',
+          },
+          order: 41,
+        },
+        {
+          name: '2er Becher',
+          color: {
+            text: 'text-sky-800',
+            bg: 'bg-sky-200',
+            border: 'border-sky-400',
+            hover: 'hover:bg-sky-300',
+          },
+          order: 42,
+        },
+        {
+          name: '3er Becher',
+          color: {
+            text: 'text-blue-800',
+            bg: 'bg-blue-200',
+            border: 'border-blue-400',
+            hover: 'hover:bg-blue-300',
+          },
+          order: 43,
+        },
+        {
+          name: 'Kreation',
+          color: {
+            text: 'text-fuchsia-800',
+            bg: 'bg-fuchsia-200',
+            border: 'border-fuchsia-400',
+            hover: 'hover:bg-fuchsia-300',
+          },
+          order: 43,
+        },
       ],
     }
   },

@@ -68,7 +68,7 @@
 
       <div
         v-if="showAddItemBar"
-        class="fixed top-0 left-0 z-10 h-screen w-screen bg-black opacity-50"
+        class="fixed top-0 left-0 z-40 h-screen w-screen bg-black opacity-50"
       ></div>
 
       <button
