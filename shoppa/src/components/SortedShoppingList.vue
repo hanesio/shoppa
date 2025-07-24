@@ -1,12 +1,16 @@
 <template>
-  <div class="w-full" v-for="list in powerlist" :key="list.shopName">
+  <div class="flex w-full flex-col gap-2" v-for="list in powerlist" :key="list.shopName">
     <div class="flex items-center gap-2">
       <p class="text-indigo-500">{{ list.shopName }}</p>
       <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
     </div>
     <div v-for="itemlist in list.categories">
-      <ul class="flex flex-col gap-0.5">
-        <p>{{ itemlist.category }}</p>
+      <ul class="relative flex flex-col gap-0.5">
+        <p
+          class="absolute left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white px-2 py-0.5 text-center text-xs text-gray-500"
+        >
+          {{ itemlist.category }}
+        </p>
         <li v-for="(item, index) in itemlist.items" :key="item.id">
           <ShoppingListItemEntry
             class="cascade"
@@ -42,6 +46,7 @@ const categoryStore = useCategoryStore()
 const shoppingListsStore = useShoppingListsStore()
 
 const powerlist = computed(() => {
+  console.log(formatByShopAndCategory(props.sortedLists))
   return formatByShopAndCategory(props.sortedLists)
 })
 
@@ -53,35 +58,69 @@ async function purchase(item: ShoppingListItem) {
 }
 
 /**
- * Formatiert die Listen so, dass sie zuerst nach Geschäften und dann innerhalb jedes Geschäfts nach Kategorien gruppiert sind.
- * @param {SortedList[]} sortedLists - Das ursprüngliche Array der nach Geschäften sortierten Listen.
- * @returns {ShopCategorizedList[]} Ein Array von Objekten, die Geschäfte repräsentieren,
+ * @interface ShopListInput
+ * Definiert die Struktur des Eingabe-Arrays für jedes Geschäft.
+ */
+export interface ShopListInput {
+  shopName: string
+  items: ShoppingListItem[]
+}
+
+/**
+ * @interface CategoryGroup
+ * Definiert die Struktur einer Gruppe von Artikeln unter einer bestimmten Kategorie.
+ */
+export interface CategoryGroup {
+  category: string
+  items: ShoppingListItem[]
+}
+
+/**
+ * @interface ShopCategorizedList
+ * Definiert die finale Ausgabestruktur: ein Geschäft mit seinen nach Kategorien gruppierten Artikeln.
+ */
+export interface ShopCategorizedList {
+  shopName: string
+  categories: CategoryGroup[]
+}
+
+/**
+ * Formatiert eine Liste von nach Geschäften sortierten Artikeln
+ * so, dass sie zuerst nach Geschäften und dann innerhalb jedes Geschäfts nach Kategorien gruppiert sind.
+ *
+ * @param sortedLists - Das ursprüngliche Array der nach Geschäften sortierten Listen.
+ * @returns Ein Array von Objekten, die Geschäfte repräsentieren,
  * wobei jedes Geschäft ein Array von Kategorien enthält und jede Kategorie ein Array von Artikeln.
  */
-function formatByShopAndCategory(sortedLists) {
-  /** @type {ShopCategorizedList[]} */
-  const result = []
+export function formatByShopAndCategory(sortedLists: ShopListInput[]): ShopCategorizedList[] {
+  const result: ShopCategorizedList[] = []
 
   sortedLists.forEach((shopList) => {
-    /** @type {Object.<string, ShoppingListItem[]>} */
-    const categoriesMap = {} // Temporäre Map zum Gruppieren der Artikel dieses Shops nach Kategorie
+    // Verwende eine Map, um Artikel nach Kategorie zu gruppieren.
+    // Maps sind typsicherer und performanter, wenn Schlüssel Nicht-Strings sein könnten
+    // oder wenn die Reihenfolge der Schlüssel wichtig ist (was hier nicht der Fall ist, aber generell gut zu wissen).
+    const categoriesMap = new Map<string, ShoppingListItem[]>()
 
     shopList.items.forEach((item) => {
       const category = item.category
 
-      if (!categoriesMap[category]) {
-        categoriesMap[category] = []
+      // Wenn die Kategorie noch nicht in der Map existiert, initialisiere ein leeres Array dafür.
+      if (!categoriesMap.has(category)) {
+        categoriesMap.set(category, [])
       }
-      categoriesMap[category].push(item)
+      // Füge das aktuelle Element dem entsprechenden Kategorie-Array hinzu.
+      categoriesMap.get(category)?.push(item) // Das '?' ist hier sicher, da wir gerade geprüft haben, dass der Schlüssel existiert.
     })
 
-    // Wandle die temporäre Map in das gewünschte Array-Format um
-    const categoriesArray = Object.keys(categoriesMap).map((categoryName) => ({
-      category: categoryName,
-      items: categoriesMap[categoryName],
-    }))
+    // Wandle die temporäre Map in das gewünschte Array-Format (CategoryGroup[]) um.
+    const categoriesArray: CategoryGroup[] = Array.from(categoriesMap.entries()).map(
+      ([categoryName, items]) => ({
+        category: categoryName,
+        items: items,
+      }),
+    )
 
-    // Füge das Geschäft mit seinen kategorisierten Artikeln zum Endergebnis hinzu
+    // Füge das Geschäft mit seinen kategorisierten Artikeln zum Endergebnis hinzu.
     result.push({
       shopName: shopList.shopName,
       categories: categoriesArray,

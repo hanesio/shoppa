@@ -20,7 +20,7 @@
       <ButtonTrash @click="deleteList" />
     </div>
     <AddItemBar
-      class="fixed top-28 left-0 z-20 transition duration-300 ease-in-out"
+      class="fixed top-28 left-0 z-50 transition duration-300 ease-in-out"
       :class="[showAddItemBar ? 'translate-y-0' : '-translate-y-70']"
       :shop-names
       :category-names
