@@ -4,7 +4,7 @@
     class="relative flex min-h-[calc(100vh_-_72px)] flex-col gap-4"
   >
     <div
-      class="fixed top-12 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
+      class="fixed top-12 left-0 z-20 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
     >
       <button @click="router.push('/lists')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
@@ -14,7 +14,7 @@
         type="text"
         v-model="listName"
         @change="updateListName"
-        class="w-full border-b-2 border-indigo-300 bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
+        class="w-full bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
       />
 
       <ButtonTrash @click="deleteList" />

@@ -1,12 +1,12 @@
 <template>
   <div class="flex">
     <div
-      class="fixed top-14 left-0 z-10 flex w-full items-center justify-between gap-2 bg-white px-4"
+      class="fixed top-12 left-0 z-20 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
     >
       <button @click="router.push(`/lists/${listId}`)">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
       </button>
-      <h1 class="border-b-3 border-transparent bg-white py-2 text-xl text-indigo-700">
+      <h1 class="bg-white py-2 text-xl text-indigo-700">
         {{ listName }}
       </h1>
       <div class="h-8 w-8"></div>

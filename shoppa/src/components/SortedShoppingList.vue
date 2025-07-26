@@ -1,27 +1,32 @@
 <template>
-  <div class="flex w-full flex-col gap-2" v-for="list in powerlist" :key="list.shopName">
-    <div class="flex items-center gap-2">
-      <p class="text-indigo-500">{{ list.shopName }}</p>
-      <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
-    </div>
-    <div v-for="itemlist in list.categories">
-      <ul class="relative flex flex-col gap-0.5">
-        <p
-          class="absolute left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white px-2 py-0.5 text-center text-xs text-gray-500"
-        >
-          {{ itemlist.category }}
-        </p>
-        <li v-for="(item, index) in itemlist.items" :key="item.id">
-          <ShoppingListItemEntry
-            class="cascade"
-            :style="`animation-delay:${0.1 * index}s`"
-            @purchase="purchase(item)"
-            @showDetails="emit('showDetails', item)"
-            :name="item.name"
-            :category="categoryStore.getCategoryByName(item.category)"
-          />
-        </li>
-      </ul>
+  <div class="flex flex-col gap-5">
+    <div class="flex w-full flex-col" v-for="list in powerlist" :key="list.shopName">
+      <div class="flex w-full items-center gap-2">
+        <p class="text-lg tracking-widest text-indigo-500">{{ list.shopName }}</p>
+        <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div v-for="itemlist in list.categories">
+          <ul class="relative flex flex-col gap-0.5">
+            <p
+              class="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white px-2 pb-0.5 text-center text-xs text-gray-500"
+            >
+              {{ itemlist.category }}
+            </p>
+            <li v-for="(item, index) in itemlist.items" :key="item.id">
+              <ShoppingListItemEntry
+                class="cascade"
+                :style="`animation-delay:${0.1 * index}s`"
+                @purchase="purchase(item)"
+                @showDetails="emit('showDetails', item)"
+                :name="item.name"
+                :category="categoryStore.getCategoryByName(item.category)"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
