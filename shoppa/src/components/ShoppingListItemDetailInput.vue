@@ -1,5 +1,5 @@
 <template>
-  <div class="relative my-10 flex cursor-pointer items-center justify-between gap-4 px-2">
+  <div class="relative flex cursor-pointer items-center justify-between gap-4 px-2">
     <input
       type="text"
       @change="updateItem"

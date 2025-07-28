@@ -12,7 +12,7 @@
       <div class="h-8 w-8"></div>
     </div>
 
-    <div class="flex w-full flex-col justify-between gap-4">
+    <div class="mt-10 flex w-full flex-col justify-between gap-4">
       <div v-if="item">
         <ShoppingListItemDetailInput
           :category="categoryStore.getCategoryByName(newItemCategory)"
@@ -23,7 +23,7 @@
           @put-back="putBack(item)"
         />
 
-        <div class="flex flex-col gap-8 p-4">
+        <div class="flex flex-col gap-4 p-4">
           <div>
             <h2 class="text-lg text-indigo-500">Geschäft</h2>
             <PillSelect
@@ -101,8 +101,7 @@ const dateAdded = ref(
     : 'Unbekannt',
 )
 
-const newItemCategory = ref(item.value?.category || 'Sonstiges')
-const newShopName = ref(item.value?.shopName || 'Supermarkt')
+const newShopName = ref(item.value?.shopName || 'ALDI')
 
 const categoryStore = useCategoryStore()
 const shopStore = useShopStore()
@@ -111,6 +110,7 @@ const categoryNames = computed(() => {
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
   else return []
 })
+const newItemCategory = ref(categoryNames.value ? categoryNames.value[0] : 'Sonstiges')
 const categoryColors = computed(() => {
   return categoryStore.categories
     .filter((category) => categoryNames.value!.includes(category.name)) // TODO: make secure
@@ -118,6 +118,10 @@ const categoryColors = computed(() => {
 })
 
 const shopNames = shopStore.shops.map((shop) => shop.name)
+
+watch(newShopName, () => {
+  if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
+})
 
 async function purchase(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, purchased: true })

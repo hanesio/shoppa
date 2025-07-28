@@ -41,7 +41,7 @@ const size = computed(() => {
     case 'lg':
       return 'text-md  py-3 border-6'
     default:
-      return 'text-sm  py-2 border-3'
+      return 'text-sm  py-2 border-3 max-w-max'
   }
 })
 </script>

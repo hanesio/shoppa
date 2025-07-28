@@ -17,7 +17,28 @@
         class="w-full bg-white py-2 text-center text-xl text-indigo-700 focus:outline-0"
       />
 
-      <ButtonTrash @click="deleteList" />
+      <button
+        class="relative h-10 w-14 shrink-0 cursor-pointer items-center justify-center"
+        @click="showContextMenu = !showContextMenu"
+      >
+        <div class="flex flex-col items-center gap-1">
+          <div class="h-1 w-1 rounded-full bg-gray-800"></div>
+          <div class="h-1 w-1 rounded-full bg-gray-800"></div>
+          <div class="h-1 w-1 rounded-full bg-gray-800"></div>
+        </div>
+        <div
+          v-if="showContextMenu"
+          class="absolute top-10 right-0 flex w-64 flex-col gap-4 rounded-sm bg-indigo-500 p-4 text-white opacity-90"
+        >
+          <button @click="deleteList" class="flex items-center justify-between">
+            <p>löschen</p>
+          </button>
+          <hr class="border-white opacity-30" />
+          <button @click="share" class="flex items-center justify-between">
+            <p>teilen</p>
+          </button>
+        </div>
+      </button>
     </div>
     <AddItemBar
       class="fixed top-28 left-0 z-50 transition duration-300 ease-in-out"
@@ -105,10 +126,15 @@ import IconPlus from '@/components/icons/IconPlus.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
 import ButtonTrash from '@/components/ButtonTrash.vue'
+import { formatByShopAndCategory } from '@/utils'
+import { useClipboard } from '@vueuse/core'
 
 const route = useRoute()
 const router = useRouter()
 const listId = route.params.id as string
+
+const source = ref('Hello')
+const { text, copy, copied, isSupported } = useClipboard({ source })
 
 const shoppingListsStore = useShoppingListsStore()
 
@@ -121,6 +147,7 @@ const shopNames = shopStore.shops.map((shop) => shop.name)
 const authStore = useAuthStore()
 
 const showAddItemBar = ref(false)
+const showContextMenu = ref(false)
 
 const openItems = computed(() => {
   const list = shoppingListsStore.getListById(listId)
@@ -139,7 +166,8 @@ watch(list, () => {
   if (list.value) listName.value = list.value.name
 })
 const listsByShops = computed(() => {
-  return sortListByShops(openItems.value)
+  const sortedLists = sortListByShops(openItems.value)
+  return formatByShopAndCategory(sortedLists)
 })
 
 const purchasedItems = computed(() => {
@@ -189,6 +217,18 @@ async function deleteList() {
   router.push('/lists')
 }
 
+function share() {
+  let output = ''
+  listsByShops.value.forEach((list) => {
+    output += list.shopName + '\n'
+    list.categories.forEach((category) => {
+      output += 'o ' + category.category + '\n'
+      category.items.forEach((item) => (output += ' - ' + item.name + '\n'))
+    })
+  })
+  source.value = output
+  copy(source.value)
+}
 // A local cache within the component for display names to prevent re-fetching/re-rendering issues
 const authorDisplayNames = reactive<{ [uid: string]: string }>({})
 

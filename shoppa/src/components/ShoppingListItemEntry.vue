@@ -11,7 +11,7 @@
     }}</span>
     <button
       @click="$emit('purchase')"
-      class="group flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-3 border-indigo-300"
+      class="group flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-gray-300"
     ></button>
   </div>
 </template>

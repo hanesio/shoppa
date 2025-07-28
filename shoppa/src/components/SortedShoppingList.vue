@@ -34,18 +34,12 @@
 import { useCategoryStore } from '@/stores/categoryStore'
 import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import ShoppingListItemEntry from './ShoppingListItemEntry.vue'
-import {
-  type CategoryGroup,
-  type ShopCategorizedList,
-  type ShopListInput,
-  type ShoppingListItem,
-} from '@/types'
+import { type ShopCategorizedList, type ShoppingListItem } from '@/types'
 import { computed } from 'vue'
-import { formatByShopAndCategory } from '@/utils'
 
 const props = defineProps<{
   listId: string
-  sortedLists: { shopName: string; items: ShoppingListItem[] }[]
+  sortedLists: ShopCategorizedList[]
 }>()
 
 const emit = defineEmits<{
@@ -57,11 +51,8 @@ const categoryStore = useCategoryStore()
 const shoppingListsStore = useShoppingListsStore()
 
 const powerlist = computed(() => {
-  console.log(formatByShopAndCategory(props.sortedLists))
-  return formatByShopAndCategory(props.sortedLists)
+  return props.sortedLists
 })
-
-console.log(powerlist.value)
 
 async function purchase(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(props.listId, { ...item, purchased: true })

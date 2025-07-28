@@ -98,7 +98,6 @@ watch(newItemCategory, () => {
 })
 watch(newShopName, () => {
   if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
-  console.log(newItemCategory.value)
   inputRef.value?.focus()
 })
 async function addItem() {
