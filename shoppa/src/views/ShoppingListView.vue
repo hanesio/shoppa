@@ -28,14 +28,18 @@
         </div>
         <div
           v-if="showContextMenu"
-          class="absolute top-10 right-0 flex w-64 flex-col gap-4 rounded-sm bg-indigo-500 p-4 text-white opacity-90"
+          class="absolute top-0 right-0 flex w-64 flex-col gap-4 rounded-sm bg-white p-4 shadow-2xl"
         >
-          <button @click="deleteList" class="flex items-center justify-between">
-            <p>löschen</p>
+          <button @click="deleteList" class="flex justify-between">
+            <span>löschen</span>
           </button>
-          <hr class="border-white opacity-30" />
+          <hr class="border-gray-200" />
           <button @click="share" class="flex items-center justify-between">
-            <p>teilen</p>
+            <span>in Zwischenablage kopieren</span>
+          </button>
+          <hr class="border-gray-200" />
+          <button class="flex" @click="showInvite(listId, listName)">
+            <span>Person einladen</span>
           </button>
         </div>
       </button>
@@ -109,6 +113,13 @@
       </p>
     </footer>
   </div>
+  <ShoppingListInvite
+    class="m-auto"
+    @close="closeInvite()"
+    :list-id="currentInviteListId"
+    :list-name="currentInviteListName"
+    :dialog-open
+  />
 </template>
 
 <script setup lang="ts">
@@ -128,10 +139,23 @@ import { useRouter } from 'vue-router'
 import ButtonTrash from '@/components/ButtonTrash.vue'
 import { formatByShopAndCategory } from '@/utils'
 import { useClipboard } from '@vueuse/core'
+import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
 const route = useRoute()
 const router = useRouter()
 const listId = route.params.id as string
+const dialogOpen = ref(false)
+
+const currentInviteListId = ref('')
+const currentInviteListName = ref('')
+const showInvite = (listId: string, listName: string) => {
+  dialogOpen.value = true
+  currentInviteListId.value = listId
+  currentInviteListName.value = listName
+}
+const closeInvite = () => {
+  dialogOpen.value = false
+}
 
 const source = ref('Hello')
 const { text, copy, copied, isSupported } = useClipboard({ source })
