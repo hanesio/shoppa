@@ -18,7 +18,7 @@
       />
 
       <button
-        class="relative h-10 w-14 shrink-0 cursor-pointer items-center justify-center"
+        class="relative h-10 w-12 shrink-0 cursor-pointer items-center justify-center"
         @click="showContextMenu = !showContextMenu"
       >
         <div class="flex flex-col items-center gap-1">
