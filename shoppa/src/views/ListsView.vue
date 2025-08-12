@@ -30,7 +30,6 @@
 
 <script setup lang="ts">
 import ShoppingListCard from '@/components/ShoppingListCard.vue'
-import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
 
 import { useRouter } from 'vue-router'
 import { useShoppingListsStore } from '@/stores/shoppingListsStore'

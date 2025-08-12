@@ -136,7 +136,6 @@ import AddItemBar from '@/components/AddItemBar.vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
-import ButtonTrash from '@/components/ButtonTrash.vue'
 import { formatByShopAndCategory } from '@/utils'
 import { useClipboard } from '@vueuse/core'
 import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
@@ -158,7 +157,7 @@ const closeInvite = () => {
 }
 
 const source = ref('Hello')
-const { text, copy, copied, isSupported } = useClipboard({ source })
+const { copy } = useClipboard({ source })
 
 const shoppingListsStore = useShoppingListsStore()
 

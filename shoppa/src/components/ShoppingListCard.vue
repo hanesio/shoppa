@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ShoppingList, ShoppingListItem } from '@/types'
+import type { ShoppingListItem } from '@/types'
 
 const props = defineProps<{
   name: string
@@ -43,7 +43,6 @@ const emit = defineEmits<{
 }>()
 
 const itemsToBuy = props.items.filter((item) => !item.purchased)
-const itemsPurchased = props.items.filter((item) => item.purchased)
 const openItemsCount = itemsToBuy.length
 function showList() {
   emit('showList')

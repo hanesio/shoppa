@@ -110,7 +110,7 @@ const categoryNames = computed(() => {
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
   else return []
 })
-const newItemCategory = ref(categoryNames.value ? item.value?.category : 'Sonstiges')
+const newItemCategory = ref(item.value ? item.value?.category : 'Sonstiges')
 const categoryColors = computed(() => {
   return categoryStore.categories
     .filter((category) => categoryNames.value!.includes(category.name)) // TODO: make secure
