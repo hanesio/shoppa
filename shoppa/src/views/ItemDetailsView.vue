@@ -110,7 +110,7 @@ const categoryNames = computed(() => {
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
   else return []
 })
-const newItemCategory = ref(categoryNames.value ? categoryNames.value[0] : 'Sonstiges')
+const newItemCategory = ref(categoryNames.value ? item.value?.category : 'Sonstiges')
 const categoryColors = computed(() => {
   return categoryStore.categories
     .filter((category) => categoryNames.value!.includes(category.name)) // TODO: make secure
@@ -121,6 +121,7 @@ const shopNames = shopStore.shops.map((shop) => shop.name)
 
 watch(newShopName, () => {
   if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
+  if (item.value) updateCategory(item.value)
 })
 
 async function purchase(item: ShoppingListItem) {

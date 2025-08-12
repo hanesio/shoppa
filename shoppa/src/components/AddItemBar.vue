@@ -16,6 +16,7 @@
           v-model="newItemName"
           @keyup.enter="addItem"
           @keyup.esc="newItemName = ''"
+          autocapitalize="on"
         />
         <ButtonSubmit @click="addItem" />
       </div>
