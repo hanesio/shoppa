@@ -142,13 +142,13 @@ async function updateShopName(item: ShoppingListItem) {
   if (shopType.value === shopStore.getTypeByShop(newShopName.value))
     await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
   else {
+    shopType.value = shopStore.getTypeByShop(newShopName.value)
     if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
     await shoppingListsStore.updateItem(listId, {
       ...item,
       shopName: newShopName.value,
       category: newItemCategory.value,
     })
-    shopType.value = shopStore.getTypeByShop(newShopName.value)
   }
 }
 async function deleteItem() {
