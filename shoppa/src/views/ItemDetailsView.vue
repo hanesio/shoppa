@@ -23,9 +23,9 @@
           @put-back="putBack(item)"
         />
 
-        <div class="flex flex-col gap-4 p-4">
+        <div class="flex flex-col gap-2 p-2">
           <div>
-            <h2 class="text-lg text-indigo-500">Geschäft</h2>
+            <h2 class="text-center text-lg text-indigo-500">Geschäft</h2>
             <PillSelect
               text-size="lg"
               :items="shopNames"
@@ -34,7 +34,7 @@
             />
           </div>
           <div>
-            <h2 class="text-lg text-indigo-500">Kategorie</h2>
+            <h2 class="text-center text-lg text-indigo-500">Kategorie</h2>
             <PillSelect
               text-size="lg"
               :items="categoryNames"
@@ -119,11 +119,6 @@ const categoryColors = computed(() => {
 
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
-// watch(newShopName, () => {
-//   if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
-//   if (item.value) updateCategory(item.value)
-// })
-
 async function purchase(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, purchased: true })
   purchased.value = true
@@ -143,6 +138,7 @@ async function updateShopName(item: ShoppingListItem) {
     await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
   else {
     shopType.value = shopStore.getTypeByShop(newShopName.value)
+    // Update categories based on the new shop type maybe get rid of computed categoryNames
     if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
     await shoppingListsStore.updateItem(listId, {
       ...item,

@@ -1,6 +1,6 @@
 <template>
   <button
-    class="flex h-4 w-full cursor-pointer items-center justify-center rounded-full px-1 transition-colors duration-200 ease-in-out"
+    class="flex h-4 w-full cursor-pointer items-center justify-center rounded-full px-0.5 leading-4 transition-colors duration-200 ease-in-out"
     :class="[
       selected
         ? 'font-semibold' + ' ' + color.bg + ' ' + color.border + ' ' + color.text
@@ -39,7 +39,7 @@ const size = computed(() => {
     case 'md':
       return 'text-sm  py-3 border-3 max-w-max'
     case 'lg':
-      return 'text-md  py-3 border-6'
+      return 'text-md  py-4 border-6'
     default:
       return 'text-sm  py-2 border-3 max-w-max'
   }

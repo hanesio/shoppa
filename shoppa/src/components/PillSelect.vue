@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useCategoryStore } from '@/stores/categoryStore'
 import CategoryPill from './CategoryPill.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 const props = defineProps<{
   items?: string[]
   textSize?: 'sm' | 'md' | 'lg'
