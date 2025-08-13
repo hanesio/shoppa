@@ -105,9 +105,9 @@ const newShopName = ref(item.value?.shopName || 'ALDI')
 
 const categoryStore = useCategoryStore()
 const shopStore = useShopStore()
+const shopType = ref(shopStore.getTypeByShop(newShopName.value))
 const categoryNames = computed(() => {
-  const shopType = shopStore.getTypeByShop(newShopName.value)
-  if (shopType) return shopTypeStore.getCategoriesByType(shopType)
+  if (shopType.value) return shopTypeStore.getCategoriesByType(shopType.value)
   else return []
 })
 const newItemCategory = ref(item.value ? item.value?.category : 'Sonstiges')
@@ -119,10 +119,10 @@ const categoryColors = computed(() => {
 
 const shopNames = shopStore.shops.map((shop) => shop.name)
 
-watch(newShopName, () => {
-  if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
-  if (item.value) updateCategory(item.value)
-})
+// watch(newShopName, () => {
+//   if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
+//   if (item.value) updateCategory(item.value)
+// })
 
 async function purchase(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, purchased: true })
@@ -139,7 +139,17 @@ async function updateCategory(item: ShoppingListItem) {
   await shoppingListsStore.updateItem(listId, { ...item, category: newItemCategory.value })
 }
 async function updateShopName(item: ShoppingListItem) {
-  await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
+  if (shopType.value === shopStore.getTypeByShop(newShopName.value))
+    await shoppingListsStore.updateItem(listId, { ...item, shopName: newShopName.value })
+  else {
+    if (categoryNames.value) newItemCategory.value = categoryNames.value[0]
+    await shoppingListsStore.updateItem(listId, {
+      ...item,
+      shopName: newShopName.value,
+      category: newItemCategory.value,
+    })
+    shopType.value = shopStore.getTypeByShop(newShopName.value)
+  }
 }
 async function deleteItem() {
   if (confirm('Bist du sicher, dass du diesen Artikel löschen möchtest?')) {
