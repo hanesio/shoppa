@@ -59,7 +59,7 @@ const newShopName = ref(props.shopNames[0] || 'ALDI')
 const categoryNames = computed(() => {
   const shopType = shopStore.getTypeByShop(newShopName.value)
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
-  else return 'none'
+  else return ['none']
 })
 
 const newItemName = ref('')

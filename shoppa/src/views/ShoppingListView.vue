@@ -18,10 +18,10 @@
       />
 
       <button
-        class="relative h-10 w-12 shrink-0 cursor-pointer items-center justify-center"
+        class="relative h-10 w-12 shrink-0 items-center justify-center"
         @click="showContextMenu = !showContextMenu"
       >
-        <div class="flex flex-col items-center gap-1">
+        <div class="flex cursor-pointer flex-col items-center gap-1">
           <div class="h-1 w-1 rounded-full bg-gray-800"></div>
           <div class="h-1 w-1 rounded-full bg-gray-800"></div>
           <div class="h-1 w-1 rounded-full bg-gray-800"></div>
@@ -30,15 +30,15 @@
           v-if="showContextMenu"
           class="absolute top-0 right-0 flex w-64 flex-col gap-4 rounded-sm bg-white p-4 shadow-2xl"
         >
-          <button @click="deleteList" class="flex justify-between">
+          <button @click="deleteList" class="flex cursor-pointer justify-between">
             <span>löschen</span>
           </button>
           <hr class="border-gray-200" />
-          <button @click="share" class="flex items-center justify-between">
+          <button @click="share" class="flex cursor-pointer items-center justify-between">
             <span>in Zwischenablage kopieren</span>
           </button>
           <hr class="border-gray-200" />
-          <button class="flex" @click="showInvite(listId, listName)">
+          <button class="flex cursor-pointer" @click="showInvite(listId, listName)">
             <span>Person einladen</span>
           </button>
         </div>
