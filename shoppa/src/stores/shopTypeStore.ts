@@ -1,4 +1,3 @@
-import { categories } from '@vueuse/core/metadata.mjs'
 import { defineStore } from 'pinia'
 
 export interface ShopType {

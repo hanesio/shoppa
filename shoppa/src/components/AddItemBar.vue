@@ -59,6 +59,7 @@ const newShopName = ref(props.shopNames[0] || 'ALDI')
 const categoryNames = computed(() => {
   const shopType = shopStore.getTypeByShop(newShopName.value)
   if (shopType) return shopTypeStore.getCategoriesByType(shopType)
+  else return 'none'
 })
 
 const newItemName = ref('')
@@ -79,7 +80,8 @@ const show = computed(() => {
 
 watch(show, () => {
   if (barRef.value) {
-    show.value ? barRef.value.showModal() : barRef.value.close()
+    if (show.value) barRef.value.showModal()
+    else barRef.value.close()
   }
 })
 

@@ -45,7 +45,7 @@ const selected = computed(() => {
   return props.modelValue
 })
 const defaultColor = {
-  bg: 'bg-gray-100',
+  bg: 'bg-gray-200',
   text: 'text-black',
   border: 'border-black',
 }

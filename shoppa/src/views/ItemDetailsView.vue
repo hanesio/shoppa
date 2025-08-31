@@ -1,29 +1,32 @@
 <template>
-  <div class="flex">
-    <div
-      class="fixed top-12 left-0 z-20 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
-    >
-      <button @click="router.push(`/lists/${listId}`)">
-        <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
-      </button>
-      <h1 class="bg-white py-2 text-xl text-indigo-700">
-        {{ listName }}
-      </h1>
-      <div class="h-8 w-8"></div>
+  <div class="flex h-screen flex-col justify-between">
+    <div class="fixed top-0 left-0 z-20 flex flex-col gap-8 bg-white px-4 py-3">
+      <div class="flex w-full items-center justify-between gap-2">
+        <button @click="router.push(`/lists/${listId}`)">
+          <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
+        </button>
+        <h1 class="bg-white py-2 text-xl text-indigo-700">
+          {{ listName }}
+        </h1>
+        <div class="flex h-10 w-12 items-center">
+          <ButtonTrash size-class="h-8 w-8" @click="deleteItem" />
+        </div>
+      </div>
+
+      <ShoppingListItemDetailInput
+        v-if="item"
+        :category="categoryStore.getCategoryByName(newItemCategory)"
+        v-model="itemName"
+        :purchased
+        @updateItem="updateItemName(item)"
+        @purchase="purchase(item)"
+        @put-back="putBack(item)"
+      />
     </div>
 
-    <div class="mt-10 flex w-full flex-col justify-between gap-4">
+    <div class="mt-38 flex h-full w-full flex-col justify-between gap-4">
       <div v-if="item">
-        <ShoppingListItemDetailInput
-          :category="categoryStore.getCategoryByName(newItemCategory)"
-          v-model="itemName"
-          :purchased
-          @updateItem="updateItemName(item)"
-          @purchase="purchase(item)"
-          @put-back="putBack(item)"
-        />
-
-        <div class="flex flex-col gap-2 p-2">
+        <div class="flex flex-col gap-8 p-2">
           <div>
             <h2 class="text-center text-lg text-indigo-500">Geschäft</h2>
             <PillSelect
@@ -47,12 +50,17 @@
       </div>
       <p v-else class="text-gray-500">Artikel nicht gefunden</p>
 
-      <div class="flex items-center justify-between p-3">
+      <div class="flex items-center justify-between p-3 text-sm">
         <ul>
-          <li>hinzugefügt von {{ item?.author }}</li>
-          <li>am {{ dateAdded }}</li>
+          <li>
+            <span class="text-gray-400">hinzugefügt von </span>
+            <span class="text-gray-500">{{ item?.author }}</span>
+          </li>
+          <li>
+            <span class="text-gray-400">am </span>
+            <span class="text-gray-500">{{ dateAdded }}</span>
+          </li>
         </ul>
-        <ButtonTrash size-class="h-12 w-12" @click="deleteItem" />
       </div>
     </div>
   </div>

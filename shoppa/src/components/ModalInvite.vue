@@ -1,6 +1,6 @@
 <template>
-  <dialog ref="dialogRef" class="rounded-sm">
-    <div class="flex h-46 w-80 flex-col bg-gray-100 px-4 py-3">
+  <ModalBase :dialogOpen title="Einladen">
+    <div class="relative">
       <h4>
         Lade jemanden zu <span class="font-semibold text-indigo-500">{{ listName }}</span> ein
       </h4>
@@ -10,7 +10,7 @@
           @keyup.enter="handleInvite"
           v-model="inviteEmail"
           type="email"
-          placeholder="E-Mail eines Kollaborateurs "
+          placeholder="E-Mail-Adresse"
         />
         <p
           v-if="inviteStatus"
@@ -23,7 +23,7 @@
           {{ inviteMessage }}
         </p>
       </div>
-      <div class="absolute right-4 bottom-4 flex gap-2">
+      <div class="flex justify-end gap-2">
         <button
           class="cursor-pointer rounded-md bg-indigo-500 px-2 py-0.5 text-white hover:bg-indigo-600"
           @click="handleInvite"
@@ -38,13 +38,14 @@
         </button>
       </div>
     </div>
-  </dialog>
+  </ModalBase>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '../stores/authStore'
 import { useShoppingListsStore } from '../stores/shoppingListsStore'
+import ModalBase from './ModalBase.vue'
 
 const props = defineProps<{
   listId: string
@@ -57,17 +58,6 @@ const shoppingListsStore = useShoppingListsStore()
 const inviteEmail = ref('')
 const inviteStatus = ref<'success' | 'error' | null>(null)
 const inviteMessage = ref('')
-
-const dialogRef = ref<HTMLDialogElement>()
-const show = computed(() => {
-  return props.dialogOpen
-})
-
-watch(show, () => {
-  if (dialogRef.value) {
-    show.value ? dialogRef.value.showModal() : dialogRef.value.close()
-  }
-})
 
 const handleInvite = async () => {
   inviteStatus.value = null
@@ -102,14 +92,7 @@ const handleInvite = async () => {
     inviteEmail.value = '' // Clear input
   } catch (error) {
     inviteStatus.value = 'error'
-    inviteMessage.value = `Benutzer konnte nicht eingeladen werden: ${shoppingListsStore.error || 'Unknown error'}`
+    inviteMessage.value = `Benutzer konnte nicht eingeladen werden: ${shoppingListsStore.error || error || 'Unknown error'}`
   }
 }
 </script>
-
-<style>
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(0.5px);
-}
-</style>

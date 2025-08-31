@@ -4,7 +4,7 @@
     class="relative flex min-h-[calc(100vh_-_72px)] flex-col gap-4"
   >
     <div
-      class="fixed top-12 left-0 z-20 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
+      class="fixed top-0 left-0 z-20 flex w-full items-center justify-between gap-2 bg-white px-4 py-3"
     >
       <button @click="router.push('/lists')">
         <IconArrowRight class="h-8 w-8 rotate-180 cursor-pointer text-indigo-500" />
@@ -55,7 +55,7 @@
       @close="showAddItemBar = false"
     />
 
-    <div class="mt-10">
+    <div class="mt-18">
       <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
         <SortedShoppingList
           @showDetails="
@@ -113,8 +113,7 @@
       </p>
     </footer>
   </div>
-  <ShoppingListInvite
-    class="m-auto"
+  <ModalInvite
     @close="closeInvite()"
     :list-id="currentInviteListId"
     :list-name="currentInviteListName"
@@ -138,7 +137,7 @@ import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useRouter } from 'vue-router'
 import { formatByShopAndCategory } from '@/utils'
 import { useClipboard } from '@vueuse/core'
-import ShoppingListInvite from '@/components/ShoppingListInvite.vue'
+import ModalInvite from '@/components/ModalInvite.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -152,7 +151,7 @@ const showInvite = (listId: string, listName: string) => {
   currentInviteListId.value = listId
   currentInviteListName.value = listName
 }
-const closeInvite = () => {
+function closeInvite() {
   dialogOpen.value = false
 }
 
@@ -235,9 +234,8 @@ async function updateListName() {
 async function deleteList() {
   if (confirm('Bist du sicher, dass du diese Einkaufsliste löschen möchtest?')) {
     await shoppingListsStore.deleteList(listId)
+    router.push('/lists')
   }
-
-  router.push('/lists')
 }
 
 function share() {
