@@ -3,7 +3,7 @@
     <AuthButtons @open-settings="settingsOpen = true" />
   </header>
 
-  <div class="flex flex-col gap-4">
+  <div class="gap-4npm run mt-18 flex flex-col decoration-violet-50">
     <div class="flex items-center justify-between px-6 lg:w-80">
       <input
         type="text"
