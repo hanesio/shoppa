@@ -14,6 +14,7 @@
         :src="authStore.currentUser.photoURL ?? undefined"
         alt="profile picture"
       />
+      <img src="@/assets/images/Shoppa_Logo_bright.svg" alt="Shoppa Logo" class="w-10" />
     </div>
     <div v-else class="flex items-center justify-center gap-2 p-2">
       <p>Shoppa</p>
