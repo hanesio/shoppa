@@ -1,13 +1,12 @@
 <template>
   <div
     @click="showList"
-    class="relative flex cursor-pointer flex-col justify-between rounded-md bg-gradient-to-br from-slate-200 from-60% to-cyan-500 px-4 py-2 text-lg hover:bg-indigo-400"
+    class="relative flex cursor-pointer flex-col justify-between rounded-md bg-gradient-to-r from-orange-50 to-indigo-200 px-4 py-2 text-lg hover:scale-[1.02] hover:shadow-md active:scale-100 active:shadow-sm"
   >
     <p
       class="absolute top-1/2 right-0 flex translate-x-0.5 -translate-y-1/2 flex-col rounded-l-2xl rounded-r-sm bg-indigo-400 px-2 py-1 text-sm"
     >
       <span class="text-xl font-medium text-indigo-800">{{ openItemsCount }} </span>
-      <!-- <span class="text-indigo-500">{{ itemsPurchased.length }} gekauft</span> -->
     </p>
 
     <p class="h-8 truncate overflow-hidden text-xl font-semibold text-gray-800">{{ name }}</p>

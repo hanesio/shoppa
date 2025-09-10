@@ -5,7 +5,7 @@
       v-else-if="authStore.currentUser"
       class="relative flex items-center justify-between gap-2 bg-indigo-900 p-3"
     >
-      <p class="text-sm text-white">
+      <p class="text-sm text-indigo-300">
         {{ authStore.currentUser.displayName || authStore.currentUser.email }}
       </p>
       <img
@@ -14,7 +14,7 @@
         :src="authStore.currentUser.photoURL ?? undefined"
         alt="profile picture"
       />
-      <img src="@/assets/images/Shoppa_Logo_bright.svg" alt="Shoppa Logo" class="w-10" />
+      <IconShoppa class="size-7 text-indigo-400" />
     </div>
     <div v-else class="flex items-center justify-center gap-2 p-2">
       <p>Shoppa</p>
@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '../stores/authStore'
+import IconShoppa from './icons/IconShoppa.vue'
 const authStore = useAuthStore()
 </script>
 

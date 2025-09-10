@@ -1,13 +1,13 @@
 <template>
   <div class="w-full border-b-2 border-indigo-500 bg-white">
     <div class="flex flex-col" ref="contentRef">
-      <div class="flex flex-col gap-4 py-4">
+      <div class="flex flex-col gap-4 py-4 pl-1">
         <PillSelect :items="shopNames" v-model="newShopName" />
 
         <PillSelect :items="categoryNames" v-model="newItemCategory" />
       </div>
 
-      <div class="justiy-end flex items-center gap-2 bg-gray-100 px-4 py-1">
+      <div class="flex items-center justify-end gap-6 bg-gray-100 px-4 py-1 lg:gap-8">
         <input
           ref="inputRef"
           type="text"
@@ -15,9 +15,10 @@
           class="w-full rounded-sm p-2 focus:ring-0 focus:ring-indigo-500 focus:outline-none"
           v-model="newItemName"
           @keyup.enter="addItem"
-          @keyup.esc="newItemName = ''"
+          @keyup.esc="$emit('close')"
           autocapitalize="on"
         />
+        <ButtonClearInput v-if="newItemName" @click="newItemName = ''" />
         <ButtonSubmit @click="addItem" />
       </div>
     </div>
@@ -33,6 +34,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { onClickOutside } from '@vueuse/core'
 import { useShopTypeStore } from '@/stores/shopTypeStore'
 import { useShopStore } from '@/stores/shopStore'
+import ButtonClearInput from './ButtonClearInput .vue'
 
 const props = defineProps<{
   shopNames: string[]
@@ -119,7 +121,6 @@ async function addItem() {
     inputRef.value?.focus()
   }
 }
-interface ClickOutsideEvent extends MouseEvent {}
-onClickOutside(contentRef, (event: ClickOutsideEvent) => emit('close'))
+onClickOutside(contentRef, (event: MouseEvent) => emit('close'))
 </script>
 <style></style>

@@ -119,6 +119,13 @@
     :list-name="currentInviteListName"
     :dialog-open
   />
+  <ModalConfirm
+    @close="closeConfirm()"
+    @confirm="confirmAction"
+    :dialog-open="confirmShow"
+    :title="'Aktion bestätigen'"
+    :message="confirmMessage"
+  />
 </template>
 
 <script setup lang="ts">
@@ -138,11 +145,15 @@ import { useRouter } from 'vue-router'
 import { formatByShopAndCategory } from '@/utils'
 import { useClipboard } from '@vueuse/core'
 import ModalInvite from '@/components/ModalInvite.vue'
+import ModalConfirm from '@/components/ModalConfirm.vue'
 
 const route = useRoute()
 const router = useRouter()
 const listId = route.params.id as string
 const dialogOpen = ref(false)
+const confirmShow = ref(false)
+const confirmMessage = ref('')
+const confirmResult = ref(false)
 
 const currentInviteListId = ref('')
 const currentInviteListName = ref('')
@@ -232,7 +243,10 @@ async function updateListName() {
 }
 
 async function deleteList() {
-  if (confirm('Bist du sicher, dass du diese Einkaufsliste löschen möchtest?')) {
+  const confirmed = await confirmCustom(
+    'Bist du sicher, dass du diese Einkaufsliste löschen möchtest?',
+  )
+  if (confirmed) {
     await shoppingListsStore.deleteList(listId)
     router.push('/lists')
   }
@@ -268,6 +282,45 @@ const getAuthorDisplayName = (uid: string) => {
     })
     return 'Loading...' // Return a temporary string while fetching
   }
+}
+function closeConfirm() {
+  confirmResult.value = false
+  confirmShow.value = false
+}
+
+function confirmCustom(message: string): Promise<boolean> {
+  confirmMessage.value = message
+  confirmShow.value = true
+
+  return new Promise((resolve) => {
+    function onConfirm() {
+      confirmShow.value = false
+      resolve(true)
+      cleanup()
+    }
+    function onClose() {
+      confirmShow.value = false
+      resolve(false)
+      cleanup()
+    }
+    function cleanup() {
+      // Remove listeners after use
+      offConfirm()
+      offClose()
+    }
+    // Listen for confirm/close events
+    const offConfirm = watch(confirmResult, (val) => {
+      if (val) onConfirm()
+    })
+    const offClose = watch(confirmShow, (val) => {
+      if (!val && !confirmResult.value) onClose()
+    })
+  })
+}
+
+function confirmAction() {
+  confirmResult.value = true
+  confirmShow.value = false
 }
 </script>
 

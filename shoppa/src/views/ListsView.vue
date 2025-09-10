@@ -2,9 +2,12 @@
   <header class="fixed top-0 left-0 z-20 w-full">
     <AuthButtons @open-settings="settingsOpen = true" />
   </header>
+  <IconShoppa
+    class="fixed top-1/2 left-1/2 -z-10 size-400 -translate-x-1/2 -translate-y-1/2 text-orange-100"
+  />
 
-  <div class="gap-4npm run mt-18 flex flex-col decoration-violet-50">
-    <div class="flex items-center justify-between px-6 lg:w-80">
+  <div class="mt-18 flex flex-col gap-4 decoration-violet-50">
+    <div class="flex items-center justify-between p-6 lg:w-80">
       <input
         type="text"
         placeholder="Neue Liste erstellen"
@@ -42,6 +45,7 @@ import { useShoppingListsStore } from '@/stores/shoppingListsStore'
 import { ref } from 'vue'
 import IconPlus from '@/components/icons/IconPlus.vue'
 import ModalAccountSettings from '@/components/ModalAccountSettings.vue'
+import IconShoppa from '@/components/icons/IconShoppa.vue'
 
 const router = useRouter()
 const shoppingListsStore = useShoppingListsStore()
