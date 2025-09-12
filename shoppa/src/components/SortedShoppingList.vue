@@ -7,7 +7,7 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <div v-for="itemlist in list.categories">
+        <div v-for="itemlist in list.categories" :key="itemlist.category">
           <ul class="relative flex flex-col gap-0.5">
             <p
               class="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white px-2 pb-0.5 text-center text-xs text-gray-500"

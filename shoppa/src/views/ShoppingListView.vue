@@ -55,8 +55,8 @@
       @close="showAddItemBar = false"
     />
 
-    <div class="mt-18">
-      <div class="flex w-full flex-col justify-between gap-1 lg:flex-row">
+    <div class="mt-18 lg:px-150">
+      <div class="flex w-full flex-col justify-between gap-1">
         <SortedShoppingList
           @showDetails="
             router.push({
