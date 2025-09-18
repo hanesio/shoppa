@@ -55,8 +55,8 @@
       @close="showAddItemBar = false"
     />
 
-    <div class="mt-18 lg:px-150">
-      <div class="flex w-full flex-col justify-between gap-1">
+    <div class="mx-auto mt-18 w-full lg:w-120">
+      <div class="flex w-full flex-col justify-between">
         <SortedShoppingList
           @showDetails="
             router.push({
@@ -123,8 +123,9 @@
     @close="closeConfirm()"
     @confirm="confirmAction"
     :dialog-open="confirmShow"
-    :title="'Aktion bestätigen'"
+    :title="confirmationTitle"
     :message="confirmMessage"
+    :button-text="confirmationButtonText"
   />
 </template>
 
@@ -154,6 +155,8 @@ const dialogOpen = ref(false)
 const confirmShow = ref(false)
 const confirmMessage = ref('')
 const confirmResult = ref(false)
+const confirmationTitle = ref('Aktion bestätigen')
+const confirmationButtonText = ref('Bestätigen')
 
 const currentInviteListId = ref('')
 const currentInviteListName = ref('')
@@ -244,7 +247,9 @@ async function updateListName() {
 
 async function deleteList() {
   const confirmed = await confirmCustom(
+    'Liste löschen',
     'Bist du sicher, dass du diese Einkaufsliste löschen möchtest?',
+    'löschen',
   )
   if (confirmed) {
     await shoppingListsStore.deleteList(listId)
@@ -288,10 +293,11 @@ function closeConfirm() {
   confirmShow.value = false
 }
 
-function confirmCustom(message: string): Promise<boolean> {
+function confirmCustom(title: string, message: string, buttonText: string): Promise<boolean> {
   confirmMessage.value = message
   confirmShow.value = true
-
+  confirmationTitle.value = title
+  confirmationButtonText.value = buttonText
   return new Promise((resolve) => {
     function onConfirm() {
       confirmShow.value = false

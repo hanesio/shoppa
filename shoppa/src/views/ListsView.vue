@@ -2,11 +2,9 @@
   <header class="fixed top-0 left-0 z-20 w-full">
     <AuthButtons @open-settings="settingsOpen = true" />
   </header>
-  <IconShoppa
-    class="fixed top-1/2 left-1/2 -z-10 size-400 -translate-x-1/2 -translate-y-1/2 text-orange-100"
-  />
+  <IconShoppa class="fixed -top-100 left-1/2 -z-10 size-400 -translate-x-1/2 text-orange-100" />
 
-  <div class="mt-18 flex flex-col gap-4 decoration-violet-50 lg:mx-150">
+  <div class="mt-18 flex flex-col items-center gap-4 decoration-violet-50">
     <div class="flex items-center justify-between p-6 lg:w-80">
       <input
         type="text"
@@ -17,7 +15,10 @@
         @keyup.esc="newListName = ''"
       /><IconPlus class="size-8 cursor-pointer text-indigo-500" @click="addList" />
     </div>
-    <div v-if="shoppingListsStore.lists.length > 0" class="grid grid-cols-2 gap-1 lg:gap-4">
+    <div
+      v-if="shoppingListsStore.lists.length > 0"
+      class="grid grid-cols-2 gap-1 lg:w-100 lg:gap-4"
+    >
       <ShoppingListCard
         v-for="list in shoppingListsStore.lists"
         :key="list.id"

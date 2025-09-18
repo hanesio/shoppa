@@ -64,6 +64,14 @@
       </div>
     </div>
   </div>
+  <ModalConfirm
+    @close="closeConfirm()"
+    @confirm="confirmAction"
+    :dialog-open="confirmShow"
+    :title="confirmationTitle"
+    :message="confirmMessage"
+    :button-text="confirmationButtonText"
+  />
 </template>
 
 <script setup lang="ts">
@@ -78,11 +86,18 @@ import ButtonTrash from '@/components/ButtonTrash.vue'
 import PillSelect from '@/components/PillSelect.vue'
 import { useShopStore } from '@/stores/shopStore'
 import { useShopTypeStore } from '@/stores/shopTypeStore'
+import ModalConfirm from '@/components/ModalConfirm.vue'
 
 const router = useRouter()
 const route = useRoute()
 const listId = route.params.listId as string
 const itemId = route.params.itemId as string
+
+const confirmShow = ref(false)
+const confirmMessage = ref('')
+const confirmResult = ref(false)
+const confirmationTitle = ref('Aktion bestätigen')
+const confirmationButtonText = ref('Bestätigen')
 
 const shoppingListsStore = useShoppingListsStore()
 const shopTypeStore = useShopTypeStore()
@@ -156,10 +171,56 @@ async function updateShopName(item: ShoppingListItem) {
   }
 }
 async function deleteItem() {
-  if (confirm('Bist du sicher, dass du diesen Artikel löschen möchtest?')) {
+  const confirmed = await confirmCustom(
+    'Artikel löschen',
+    'Bist du sicher, dass du diesen Artikel löschen möchtest?',
+    'löschen',
+  )
+  if (confirmed) {
     await shoppingListsStore.deleteItem(listId, itemId)
     router.push(`/lists/${listId}`)
   }
+}
+
+function closeConfirm() {
+  confirmResult.value = false
+  confirmShow.value = false
+}
+
+function confirmCustom(title: string, message: string, buttonText: string): Promise<boolean> {
+  confirmMessage.value = message
+  confirmShow.value = true
+  confirmationTitle.value = title
+  confirmationButtonText.value = buttonText
+  return new Promise((resolve) => {
+    function onConfirm() {
+      confirmShow.value = false
+      resolve(true)
+      cleanup()
+    }
+    function onClose() {
+      confirmShow.value = false
+      resolve(false)
+      cleanup()
+    }
+    function cleanup() {
+      // Remove listeners after use
+      offConfirm()
+      offClose()
+    }
+    // Listen for confirm/close events
+    const offConfirm = watch(confirmResult, (val) => {
+      if (val) onConfirm()
+    })
+    const offClose = watch(confirmShow, (val) => {
+      if (!val && !confirmResult.value) onClose()
+    })
+  })
+}
+
+function confirmAction() {
+  confirmResult.value = true
+  confirmShow.value = false
 }
 </script>
 

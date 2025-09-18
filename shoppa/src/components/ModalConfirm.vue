@@ -10,7 +10,7 @@
           class="cursor-pointer rounded-md bg-indigo-500 px-2 py-0.5 text-white hover:bg-indigo-600"
           @click="$emit('confirm')"
         >
-          bestätigen
+          {{ buttonText }}
         </button>
         <button
           class="cursor-pointer rounded-md bg-gray-200 px-2 py-0.5 hover:bg-gray-300"
@@ -29,6 +29,7 @@ import ModalBase from './ModalBase.vue'
 defineProps<{
   title: string
   message: string
+  buttonText: string
   dialogOpen: boolean
 }>()
 </script>

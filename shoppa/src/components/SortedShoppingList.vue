@@ -1,19 +1,22 @@
 <template>
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col gap-8">
     <div class="flex w-full flex-col" v-for="list in powerlist" :key="list.shopName">
-      <div class="flex w-full items-center gap-2">
+      <div class="flex h-6 w-full items-center gap-2">
         <p class="text-lg tracking-widest text-indigo-500">{{ list.shopName }}</p>
         <div class="h-0.5 w-full rounded-full bg-gray-200"></div>
       </div>
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col">
         <div v-for="itemlist in list.categories" :key="itemlist.category">
           <ul class="relative flex flex-col gap-0.5">
-            <p
-              class="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white px-2 pb-0.5 text-center text-xs text-gray-500"
-            >
-              {{ itemlist.category }}
-            </p>
+            <div class="flex h-4 w-full justify-center">
+              <p
+                class="z-10 w-fit translate-y-1/2 rounded-lg bg-white px-2 pb-0.5 text-center text-xs text-gray-500"
+              >
+                {{ itemlist.category }}
+              </p>
+            </div>
+
             <li v-for="(item, index) in itemlist.items" :key="item.id">
               <ShoppingListItemEntry
                 class="cascade"
